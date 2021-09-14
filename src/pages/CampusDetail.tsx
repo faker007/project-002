@@ -17,7 +17,8 @@ import { CampusDetailUseParamsTypes } from "../types/CampusDetail.types";
 import { CampusTab } from "../types/CampusHeader.types";
 import { DB_POST } from "../types/DBService.types";
 import { authService, dbService } from "../utils/firebase";
-import { findGroupId, isLoggedIn } from "../utils/utils";
+import { findGroupId, getFirestoreQuery, isLoggedIn } from "../utils/utils";
+import { getDocs } from "firebase/firestore";
 
 export const CampusDetail: React.FC = () => {
   const { campus } = useParams<CampusDetailUseParamsTypes>();
@@ -30,8 +31,8 @@ export const CampusDetail: React.FC = () => {
   const [refetchPost, setRefetchPost] = useState(false);
 
   const loadGroupIns = async () => {
-    const query = dbService.collection("group").where("enName", "==", campus);
-    const queryResult = await query.get();
+    const q = getFirestoreQuery("group", "enName", campus);
+    const queryResult = await getDocs(q);
 
     for (const group of queryResult.docs) {
       setGroupIns(group.data());
@@ -40,8 +41,8 @@ export const CampusDetail: React.FC = () => {
 
   const loadPosts = async () => {
     const groupId = await findGroupId(campus);
-    const query = dbService.collection("post").where("groupId", "==", groupId);
-    const queryResult = await query.get();
+    const q = getFirestoreQuery("post", "groupId", groupId);
+    const queryResult = await getDocs(q);
     const arr: DB_POST[] = [];
 
     for (const doc of queryResult.docs) {

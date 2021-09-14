@@ -21,6 +21,17 @@ import { Editor } from "./Editor";
 import { v4 as uuid } from "uuid";
 import { CampusDetailComment } from "./CampusDetailComment";
 import { toast } from "react-toastify";
+import {
+  query,
+  where,
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  addDoc,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
 
 export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
   post: { groupId, comments: commentIds, createdAt, body, creatorId, id },
@@ -33,6 +44,7 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
     displayName: null,
     email: null,
     uid: "",
+    msgRoomIds: [],
   });
   const [loading, setLoading] = useState(false);
   const [editorMode, setEditorMode] = useState(false);
@@ -59,20 +71,28 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
     };
 
     try {
-      const postQuery = dbService
-        .collection("post")
-        .where("id", "==", comment.postID);
-      const queryResult = await postQuery.get();
+      // const postQuery = dbService
+      //   .collection("post")
+      //   .where("id", "==", comment.postID);
+      const postQuery = query(
+        collection(dbService, "post"),
+        where("id", "==", comment.postID)
+      );
+      const queryResult = await getDocs(postQuery);
 
-      for (const doc of queryResult.docs) {
-        if (doc.exists) {
-          await dbService.doc(`post/${doc.id}`).update({
-            comments: [...doc.data().comments, comment.id],
+      for (const docRef of queryResult.docs) {
+        if (docRef.exists()) {
+          await updateDoc(doc(dbService, `post/${docRef.id}`), {
+            comments: [...docRef.data().comments, comment.id],
           });
+          // await dbService.doc(`post/${doc.id}`).update({
+          //   comments: [...doc.data().comments, comment.id],
+          // });
         }
       }
 
-      await dbService.collection("comment").add(comment);
+      await addDoc(collection(dbService, "comment"), comment);
+      // await dbService.collection("comment").add(comment);
 
       setRefetchComments(true);
       setCommentImgUrlList([]);
@@ -105,18 +125,22 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
   const loadComments = async () => {
     const arr: DB_COMMENT[] = [];
     try {
-      const query = dbService.collection("comment").where("postID", "==", id);
-      const queryResult = await query.get();
+      // const query = dbService.collection("comment").where("postID", "==", id);
+      const q = query(
+        collection(dbService, "comment"),
+        where("postID", "==", id)
+      );
+      const queryResult = await getDocs(q);
 
-      for (const doc of queryResult.docs) {
+      for (const docRef of queryResult.docs) {
         const data: DB_COMMENT = {
-          body: doc.data().body,
-          createdAt: doc.data().createdAt,
-          creatorId: doc.data().creatorId,
-          id: doc.data().id,
-          postID: doc.data().postID,
-          replyComments: doc.data().replyComments,
-          imgUrlList: doc.data().imgUrlList,
+          body: docRef.data().body,
+          createdAt: docRef.data().createdAt,
+          creatorId: docRef.data().creatorId,
+          id: docRef.data().id,
+          postID: docRef.data().postID,
+          replyComments: docRef.data().replyComments,
+          imgUrlList: docRef.data().imgUrlList,
         };
         arr.push(data);
       }
@@ -132,14 +156,15 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
 
   const deletePostFromGroup = async () => {
     try {
-      const groupQuery = dbService.doc(`group/${groupId}`);
-      const groupQueryResult = await groupQuery.get();
+      const groupQueryResult = await getDoc(doc(dbService, `group/${groupId}`));
 
-      if (groupQueryResult.exists) {
+      if (groupQueryResult.exists()) {
         const originalPosts = groupQueryResult.data()?.posts || [];
         if (Array.isArray(originalPosts)) {
           const afterPosts = originalPosts.filter((elem) => elem !== id);
-          await groupQuery.update({ posts: afterPosts });
+          await updateDoc(doc(dbService, `group/${groupId}`), {
+            posts: afterPosts,
+          });
         }
       }
     } catch (error) {
@@ -148,18 +173,22 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
   };
 
   const deleteCommentFromPost = async (commentId: string) => {
-    const query = dbService.collection("comment").where("id", "==", commentId);
-    const queryResult = await query.get();
+    // const query = dbService.collection("comment").where("id", "==", commentId);
+    const q = query(
+      collection(dbService, "comment"),
+      where("id", "==", commentId)
+    );
+    const queryResult = await getDocs(q);
 
-    for (const doc of queryResult.docs) {
-      if (doc.exists) {
-        if (doc.data().imgUrlList) {
-          for (const url of doc.data().imgUrlList) {
+    for (const docRef of queryResult.docs) {
+      if (docRef.exists()) {
+        if (docRef.data().imgUrlList) {
+          for (const url of docRef.data().imgUrlList) {
             await deleteImgFromFirebase(url);
           }
         }
 
-        await dbService.doc(`comment/${doc.id}`).delete();
+        await deleteDoc(doc(dbService, `comment/${docRef.id}`));
       }
     }
   };
@@ -173,24 +202,25 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
     }
 
     try {
-      const query = dbService.collection("post").where("id", "==", id);
-      const queryResult = await query.get();
+      // const query = dbService.collection("post").where("id", "==", id);
+      const q = query(collection(dbService, "post"), where("id", "==", id));
+      const queryResult = await getDocs(q);
 
-      for (const doc of queryResult.docs) {
-        if (doc.exists) {
-          if (doc.data().comments) {
-            for (const commentId of doc.data().comments) {
+      for (const docRef of queryResult.docs) {
+        if (docRef.exists()) {
+          if (docRef.data().comments) {
+            for (const commentId of docRef.data().comments) {
               await deleteCommentFromPost(commentId);
             }
           }
 
-          if (doc.data().imgUrlList) {
-            for (const url of doc.data().imgUrlList) {
+          if (docRef.data().imgUrlList) {
+            for (const url of docRef.data().imgUrlList) {
               await deleteImgFromFirebase(url);
             }
           }
 
-          await dbService.doc(`post/${doc.id}`).delete();
+          await deleteDoc(doc(dbService, `post/${docRef.id}`));
         }
       }
 

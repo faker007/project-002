@@ -20,9 +20,15 @@ import { ForumDetailPost } from "../components/ForumDetailPost";
 import { ForumGroupTypes, ForumPostTypes } from "../types/Forum.types";
 import { routes } from "../utils/constants";
 import { dbService } from "../utils/firebase";
-import { findForumGroupId, isLoggedIn, loadGroupIns } from "../utils/utils";
+import {
+  findForumGroupId,
+  getFirestoreQuery,
+  isLoggedIn,
+  loadGroupIns,
+} from "../utils/utils";
 import { useHistory } from "react-router-dom";
 import { PopUpLogin } from "../components/PopUpLogin";
+import { doc, getDocs, updateDoc } from "@firebase/firestore";
 
 export const ForumDetail: React.FC = () => {
   const { forumGroup } = useParams<{ forumGroup: string }>();
@@ -39,13 +45,15 @@ export const ForumDetail: React.FC = () => {
       try {
         const arr: ForumPostTypes[] = [];
 
-        const query = dbService
-          .collection("forumPost")
-          .where("forumGroupId", "==", await findForumGroupId(forumGroup));
-        const result = await query.get();
+        const q = getFirestoreQuery(
+          "forumPost",
+          "forumGroupId",
+          await findForumGroupId(forumGroup)
+        );
+        const result = await getDocs(q);
 
         for (const doc of result.docs) {
-          if (doc.exists) {
+          if (doc.exists()) {
             const elem: ForumPostTypes = {
               body: doc.data().body,
               comments: doc.data().comments,
@@ -92,15 +100,13 @@ export const ForumDetail: React.FC = () => {
 
   const increaseViews = async () => {
     try {
-      const query = dbService
-        .collection("forumGroup")
-        .where("enName", "==", forumGroup);
-      const result = await query.get();
+      const q = getFirestoreQuery("forumGroup", "enName", forumGroup);
+      const result = await getDocs(q);
 
-      for (const doc of result.docs) {
-        if (doc.exists) {
-          await dbService.doc(`forumGroup/${doc.id}`).update({
-            views: +doc.get("views") + 1,
+      for (const docRef of result.docs) {
+        if (docRef.exists()) {
+          await updateDoc(doc(dbService, `forumGroup/${docRef.id}`), {
+            views: +docRef.get("views") + 1,
           });
         }
       }

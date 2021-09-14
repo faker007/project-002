@@ -1,5 +1,5 @@
 {
-  "name": "campus_mate",
+  "name": "seogyeong-time",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -17,7 +17,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "cross-env": "^7.0.3",
-    "firebase": "^8.10.0",
+    "firebase": "^9.0.2",
     "moment": "^2.29.1",
     "quill-image-resize-module": "^3.0.0",
     "quill-image-resize-module-react": "^3.0.0",

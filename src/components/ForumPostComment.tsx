@@ -16,7 +16,18 @@ import {
   getUserFromUid,
   isLoggedIn,
   timeCalc,
+  getFirestoreQuery,
+  getFirestoreDoc,
 } from "../utils/utils";
+import {
+  query,
+  where,
+  getDocs,
+  doc,
+  collection,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 export const ForumPostComment: React.FC<ForumPostCommentTypes> = ({
   comment: {
@@ -46,27 +57,33 @@ export const ForumPostComment: React.FC<ForumPostCommentTypes> = ({
     }
 
     try {
-      const query = dbService.collection("forumComment").where("id", "==", id);
-      const result = await query.get();
+      // const query = dbService.collection("forumComment").where("id", "==", id);
+      const q = query(
+        collection(dbService, "forumComment"),
+        where("id", "==", id)
+      );
+      const result = await getDocs(q);
 
-      for (const doc of result.docs) {
-        if (doc.exists) {
-          await dbService.doc(`forumComment/${doc.id}`).delete();
+      for (const docRef of result.docs) {
+        if (docRef.exists()) {
+          await deleteDoc(doc(dbService, `forumComment/${docRef.id}`));
 
           for (const url of imgUrlList) {
             await deleteImgFromFirebase(url);
           }
 
-          const postQuery = dbService
-            .collection("forumPost")
-            .where("id", "==", postID);
-          const postResult = await postQuery.get();
+          // const postQuery = dbService
+          //   .collection("forumPost")
+          //   .where("id", "==", postID);
 
-          for (const doc of postResult.docs) {
-            if (doc.exists) {
-              await dbService.doc(`forumPost/${doc.id}`).update({
+          const postQuery = getFirestoreQuery("forumPost", "id", postID);
+          const postResult = await getDocs(postQuery);
+
+          for (const docRef of postResult.docs) {
+            if (docRef.exists()) {
+              await updateDoc(getFirestoreDoc(`forumPost/${docRef.id}`), {
                 comments: [
-                  ...doc.data().comments.filter((elem: any) => elem !== id),
+                  ...docRef.data().comments.filter((elem: any) => elem !== id),
                 ],
               });
             }

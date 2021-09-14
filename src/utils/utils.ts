@@ -4,6 +4,19 @@ import { DB_Group, DB_UserTypes } from "../types/DBService.types";
 import { ForumGroupTypes, ForumPostTypes } from "../types/Forum.types";
 import { CAMPUS_GROUPS } from "./constants";
 import { authService, dbService, storageService } from "./firebase";
+import {
+  query,
+  collection,
+  addDoc,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
+import { Query, DocumentData, DocumentReference } from "firebase/firestore";
 
 export const getMinimizedStr = (str: string): string => {
   let result = str;
@@ -18,6 +31,20 @@ export const isLoggedIn = (): boolean => {
   return Boolean(authService.currentUser?.uid);
 };
 
+export const getFirestoreQuery = (
+  path: string,
+  queryCond: string,
+  value: string
+): Query<DocumentData> => {
+  return query(collection(dbService, path), where(queryCond, "==", value));
+};
+
+export const getFirestoreDoc = (
+  path: string
+): DocumentReference<DocumentData> => {
+  return doc(dbService, path);
+};
+
 export const initGroups = async () => {
   for (const group of CAMPUS_GROUPS) {
     const dbGroup: DB_Group = {
@@ -26,15 +53,21 @@ export const initGroups = async () => {
       participants: [],
       posts: [],
     };
-    await dbService.collection("group").add(dbGroup);
+    await addDoc(collection(dbService, "group"), dbGroup);
+    // await dbService.collection("group").add(dbGroup);
   }
 };
 
 export const findGroupId = async (group: string): Promise<string> => {
   let result = "";
   try {
-    const query = dbService.collection("group").where("enName", "==", group);
-    const queryResult = await query.get();
+    // const query = dbService.collection("group").where("enName", "==", group);
+    const q = query(
+      collection(dbService, "group"),
+      where("enName", "==", group)
+    );
+
+    const queryResult = await getDocs(q);
 
     for (const doc of queryResult.docs) {
       if (doc.id) {
@@ -51,10 +84,14 @@ export const findGroupId = async (group: string): Promise<string> => {
 export const findForumGroupId = async (group: string): Promise<string> => {
   let result = "";
   try {
-    const query = dbService
-      .collection("forumGroup")
-      .where("enName", "==", group);
-    const queryResult = await query.get();
+    // const query = dbService
+    //   .collection("forumGroup")
+    //   .where("enName", "==", group);
+    const q = query(
+      collection(dbService, "forumGroup"),
+      where("enName", "==", group)
+    );
+    const queryResult = await getDocs(q);
 
     for (const doc of queryResult.docs) {
       if (doc.id) {
@@ -72,8 +109,9 @@ export const getUserFromUid = async (
   uid: string
 ): Promise<DB_UserTypes | null> => {
   try {
-    const query = dbService.collection("user").where("uid", "==", uid);
-    const queryResult = await query.get();
+    // const query = dbService.collection("user").where("uid", "==", uid);
+    const q = query(collection(dbService, "user"), where("uid", "==", uid));
+    const queryResult = await getDocs(q);
 
     for (const doc of queryResult.docs) {
       const data = doc.data();
@@ -81,6 +119,7 @@ export const getUserFromUid = async (
         displayName: data.displayName,
         email: data.email,
         uid: data.uid,
+        msgRoomIds: data.msgRoomIds,
       };
     }
   } catch (error) {
@@ -113,10 +152,10 @@ export const timeCalc = (time: number): string => {
 
 export const deleteImgFromFirebase = async (imgUrl: string) => {
   try {
-    const imgRef = storageService.refFromURL(imgUrl);
+    const imgRef = ref(storageService, imgUrl);
     console.log(imgRef);
     if (imgRef) {
-      await imgRef.delete();
+      await deleteObject(imgRef);
     }
   } catch (error) {
     console.log(error);
@@ -127,13 +166,17 @@ export const loadGroupIns = async (
   forumGroup: string
 ): Promise<ForumGroupTypes | null> => {
   try {
-    const query = dbService
-      .collection("forumGroup")
-      .where("enName", "==", forumGroup);
-    const result = await query.get();
+    // const query = dbService
+    //   .collection("forumGroup")
+    //   .where("enName", "==", forumGroup);
+    const q = query(
+      collection(dbService, "forumGroup"),
+      where("enName", "==", forumGroup)
+    );
+    const result = await getDocs(q);
 
     for (const doc of result.docs) {
-      if (doc.exists) {
+      if (doc.exists()) {
         return {
           enName: doc.data().enName,
           korName: doc.data().korName,
@@ -156,65 +199,79 @@ export const handleDeleteForumPost = async (
     return false;
   }
 
-  if (!post || post.creatorId != authService.currentUser?.uid) {
+  if (!post || post.creatorId !== authService.currentUser?.uid) {
     toast.error("해당 게시물을 지울 권한이 없습니다.");
     return false;
   }
 
   try {
     // delete from forumGroup
-    const forumGroupQuery = dbService.doc(`forumGroup/${post.forumGroupId}`);
-    const forumGroupQueryResult = await forumGroupQuery.get();
-    if (forumGroupQueryResult.exists) {
+    // const forumGroupQuery = dbService.doc(`forumGroup/${post.forumGroupId}`);
+    const forumGroupDoc = doc(dbService, `forumGroup/${post.forumGroupId}`);
+    const forumGroupQueryResult = await getDoc(forumGroupDoc);
+    if (forumGroupQueryResult.exists()) {
       const forumGroupPosts = forumGroupQueryResult.get("posts");
       if (Array.isArray(forumGroupPosts)) {
         const afterPosts = forumGroupPosts.filter(
           (postId) => postId !== post.id
         );
-        await forumGroupQuery.update({
+        await updateDoc(forumGroupDoc, {
           posts: [...afterPosts],
         });
+        // await forumGroupQuery.update({
+        //   posts: [...afterPosts],
+        // });
       }
     }
 
     // delete comments
     for (const commentId of post.comments) {
-      const commentQuery = dbService
-        .collection("forumComment")
-        .where("id", "==", commentId);
-      const commentQueryResult = await commentQuery.get();
-      for (const doc of commentQueryResult.docs) {
-        if (doc.exists) {
+      // const commentQuery = dbService
+      //   .collection("forumComment")
+      //   .where("id", "==", commentId);
+      const commentQuery = query(
+        collection(dbService, "forumComment"),
+        where("id", "==", commentId)
+      );
+      const commentQueryResult = await getDocs(commentQuery);
+      for (const docRef of commentQueryResult.docs) {
+        if (docRef.exists()) {
           // 이미지가 있으면 삭제
-          const commentImgList = doc.get("imgUrlList");
+          const commentImgList = docRef.get("imgUrlList");
           if (commentImgList && Array.isArray(commentImgList)) {
             for (const imgUrl of commentImgList) {
               await deleteImgFromFirebase(imgUrl);
             }
           }
 
-          console.log(doc.id);
+          await deleteDoc(doc(dbService, `forumComment/${docRef.id}`));
 
-          await dbService.doc(`forumComment/${doc.id}`).delete();
+          // await dbService.doc(`forumComment/${doc.id}`).delete();
         }
       }
     }
     // delete post
-    const postQuery = dbService
-      .collection("forumPost")
-      .where("id", "==", post.id);
-    const postQueryResult = await postQuery.get();
+    // const postQuery = dbService
+    //   .collection("forumPost")
+    //   .where("id", "==", post.id);
+    const postQuery = query(
+      collection(dbService, "forumPost"),
+      where("id", "==", post.id)
+    );
+    const postQueryResult = await getDocs(postQuery);
 
-    for (const doc of postQueryResult.docs) {
-      if (doc.exists) {
+    for (const docRef of postQueryResult.docs) {
+      if (docRef.exists()) {
         // 이미지가 있으면 삭제
-        const postImgList = doc.get("imgUrlList");
+        const postImgList = docRef.get("imgUrlList");
         if (postImgList && Array.isArray(postImgList)) {
           for (const imgUrl of postImgList) {
             await deleteImgFromFirebase(imgUrl);
           }
         }
-        await dbService.doc(`forumPost/${doc.id}`).delete();
+
+        await deleteDoc(doc(dbService, `forumPost/${docRef.id}`));
+        // await dbService.doc(`forumPost/${doc.id}`).delete();
       }
     }
 

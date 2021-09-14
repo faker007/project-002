@@ -1,3 +1,4 @@
+import React from "react";
 import { faTimesCircle, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -10,6 +11,17 @@ import { authService, dbService } from "../utils/firebase";
 import { deleteImgFromFirebase, findGroupId, isLoggedIn } from "../utils/utils";
 import { Editor } from "./Editor";
 import { v4 as uuid } from "uuid";
+import {
+  query,
+  where,
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  deleteDoc,
+  addDoc,
+  getDoc,
+} from "firebase/firestore";
 
 export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
   mode,
@@ -40,15 +52,20 @@ export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
     };
 
     try {
-      await dbService.collection("post").add(post);
+      await addDoc(collection(dbService, "post"), post);
+      // await dbService.collection("post").add(post);
 
-      const groupRef = await dbService.doc(`group/${groupId}`).get();
+      // const groupRef = await dbService.doc(`group/${groupId}`).get();
+      const groupRef = await getDoc(doc(dbService, `group/${groupId}`));
 
-      if (groupRef.exists) {
+      if (groupRef.exists()) {
         const postsRef = groupRef.data()?.posts || [];
-        await dbService.doc(`group/${groupId}`).update({
+        await updateDoc(doc(dbService, `group/${groupId}`), {
           posts: [...postsRef, post.id],
         });
+        // await dbService.doc(`group/${groupId}`).update({
+        //   posts: [...postsRef, post.id],
+        // });
       }
 
       setRefetch(true);
@@ -56,6 +73,7 @@ export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
       toast.success("성공적으로 게시물을 게시했습니다.");
     } catch (error) {
       console.log(error);
+      // @ts-ignore
       toast.error(error);
     }
   };

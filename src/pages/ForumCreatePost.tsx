@@ -21,6 +21,13 @@ import {
   loadGroupIns,
 } from "../utils/utils";
 import { v4 as uuid } from "uuid";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+} from "@firebase/firestore";
 
 export const ForumCreatePost: React.FC = () => {
   const { forumGroup } = useParams<{ forumGroup: string }>();
@@ -70,14 +77,15 @@ export const ForumCreatePost: React.FC = () => {
     };
 
     try {
-      await dbService.collection("forumPost").add(post);
+      await addDoc(collection(dbService, "forumPost"), post);
 
       const forumGroupId = await findForumGroupId(forumGroup);
-      const forumGroupQuery = dbService.doc(`forumGroup/${forumGroupId}`);
-      const forumGroupResult = await forumGroupQuery.get();
 
-      if (forumGroupResult.exists) {
-        await forumGroupQuery.update({
+      const forumGroupQuery = doc(dbService, `forumGroup/${forumGroupId}`);
+      const forumGroupResult = await getDoc(forumGroupQuery);
+
+      if (forumGroupResult.exists()) {
+        await updateDoc(forumGroupQuery, {
           posts: [post.id, ...forumGroupResult.data()?.posts],
         });
       }

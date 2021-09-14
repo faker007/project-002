@@ -1,18 +1,19 @@
-import firebase from "firebase";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBd2q_j6RR7vDwGp-6oFmZj2JUoruC97fM",
-  authDomain: "jido-button.firebaseapp.com",
-  projectId: "jido-button",
-  storageBucket: "jido-button.appspot.com",
-  messagingSenderId: "1094443221312",
-  appId: "1:1094443221312:web:3b1f108b26617bf6fcfaa5",
-  measurementId: "G-9BDBHK73WD",
+  apiKey: "AIzaSyDzoaOuPcCgA3R2iBLd8TG6ILYqQ4_AxVQ",
+  authDomain: "seogyeong-time.firebaseapp.com",
+  projectId: "seogyeong-time",
+  storageBucket: "seogyeong-time.appspot.com",
+  messagingSenderId: "730917674820",
+  appId: "1:730917674820:web:0c29883f0d3208825b8111",
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-export const fBase = firebase;
-export const authService = firebase.auth();
-export const storageService = firebase.storage();
-export const dbService = firebase.firestore();
+export const authService = getAuth(app);
+export const storageService = getStorage(app);
+export const dbService = getFirestore(app);

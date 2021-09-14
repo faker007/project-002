@@ -1,6 +1,6 @@
 export const Home: React.FC = () => {
   return (
-    <div className="w-full min-h-screen bg-white mx-auto px-24">
+    <div className="w-full bg-white mx-auto px-24">
       <div>
         <img
           draggable={false}
@@ -12,12 +12,8 @@ export const Home: React.FC = () => {
         <h1 className="text-7xl font-semibold text-green-500 ">
           대학교 친구가 필요해?!
           <br />
-          서경메이트!{" "}
+          서경타임!{" "}
         </h1>
-        <h2 className="mt-10">
-          서경메이트에서는 미팅, 과팅, 스터디, 동아리, 소모임 등 다양한 교류
-          활동을 이용해보세요!
-        </h2>
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import { addDoc, collection, onSnapshot } from "@firebase/firestore";
+import { async } from "@firebase/util";
 import {
   faCircleNotch,
   faSearch,
@@ -11,6 +13,7 @@ import { domainToASCII } from "url";
 import { ForumGroup } from "../components/ForumGroup";
 import { LoginCore } from "../components/LoginCore";
 import { PopUpLogin } from "../components/PopUpLogin";
+import { DB_Group } from "../types/DBService.types";
 import { ForumGroupTypes } from "../types/Forum.types";
 import { FORUM_GROUPS, FORUM_HERO_IMGS, routes } from "../utils/constants";
 import { dbService } from "../utils/firebase";
@@ -74,9 +77,9 @@ export const Forum: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     setMenuOpen(false);
-    dbService
-      .collection("forumGroup")
-      .onSnapshot((ref) => loadForumGroup(ref.docs));
+    onSnapshot(collection(dbService, "forumGroup"), (ref) => {
+      loadForumGroup(ref.docs);
+    });
 
     return () => {
       document.body.style.overflow = "";
@@ -129,7 +132,7 @@ export const Forum: React.FC = () => {
           </section>
           {/* 게시물 작성 클릭시 열리는 카테고리 선택 후 포스트 작성 이동 컴포넌트 */}
           {forumGroup.length > 0 && menuOpen && (
-            <div className="fixed top-0 left-0 w-full h-screen backdrop-filter backdrop-blur-sm flex justify-center items-center">
+            <div className="z-10 fixed top-0 left-0 w-full h-screen backdrop-filter backdrop-blur-sm flex justify-center items-center">
               <div
                 onClick={() => setMenuOpen(false)}
                 className="fixed top-0 left-0 w-full h-screen bg-black opacity-50 z-0"

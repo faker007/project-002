@@ -7,6 +7,8 @@ import { CampusHeader } from "../components/CampusHeader";
 import { CampusDetailUseParamsTypes } from "../types/CampusDetail.types";
 import { CampusTab } from "../types/CampusHeader.types";
 import { dbService } from "../utils/firebase";
+import { getFirestoreQuery } from "../utils/utils";
+import { getDocs } from "firebase/firestore";
 
 export const CampusAbout: React.FC = () => {
   const { campus } = useParams<CampusDetailUseParamsTypes>();
@@ -14,8 +16,8 @@ export const CampusAbout: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const loadGroupIns = async () => {
-    const query = dbService.collection("group").where("enName", "==", campus);
-    const queryResult = await query.get();
+    const q = getFirestoreQuery("group", "enName", campus);
+    const queryResult = await getDocs(q);
 
     for (const group of queryResult.docs) {
       setGroupIns(group.data());

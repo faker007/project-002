@@ -9,6 +9,11 @@ import { toast } from "react-toastify";
 import { DB_UserTypes } from "../types/DBService.types";
 import { LoginModeTypes } from "../types/LoginMode.types";
 import { authService, dbService } from "../utils/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 
 export const LoginCore: React.FC<LoginModeTypes> = ({
   loginMode,
@@ -43,8 +48,11 @@ export const LoginCore: React.FC<LoginModeTypes> = ({
       try {
         if (signInMode) {
           // 회원가입
-          const userCredential =
-            await authService.createUserWithEmailAndPassword(email, password);
+          const userCredential = await createUserWithEmailAndPassword(
+            authService,
+            email,
+            password
+          );
 
           if (userCredential.user) {
             // 해당 유저 데이터중 유의미한 데이터만 db에 저장
@@ -52,16 +60,18 @@ export const LoginCore: React.FC<LoginModeTypes> = ({
               displayName: userCredential.user.displayName,
               email: userCredential.user.email,
               uid: userCredential.user.uid,
+              msgRoomIds: [],
             };
 
-            await dbService.collection("user").add(dbUser);
+            await addDoc(collection(dbService, "user"), dbUser);
 
             setLoginMode(false);
             toast.success("성공적으로 유저 생성 완료");
           }
         } else {
           // 로그인
-          const userCredential = await authService.signInWithEmailAndPassword(
+          const userCredential = await signInWithEmailAndPassword(
+            authService,
             email,
             password
           );

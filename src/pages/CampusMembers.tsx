@@ -1,3 +1,4 @@
+import { getDocs } from "@firebase/firestore";
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -7,6 +8,7 @@ import { CampusHeader } from "../components/CampusHeader";
 import { CampusDetailUseParamsTypes } from "../types/CampusDetail.types";
 import { CampusTab } from "../types/CampusHeader.types";
 import { dbService } from "../utils/firebase";
+import { getFirestoreQuery } from "../utils/utils";
 
 export const CampusMembers: React.FC = () => {
   const { campus } = useParams<CampusDetailUseParamsTypes>();
@@ -14,8 +16,8 @@ export const CampusMembers: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const loadGroupIns = async () => {
-    const query = dbService.collection("group").where("enName", "==", campus);
-    const queryResult = await query.get();
+    const q = getFirestoreQuery("group", "enName", campus);
+    const queryResult = await getDocs(q);
 
     for (const group of queryResult.docs) {
       setGroupIns(group.data());

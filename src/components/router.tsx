@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Campus } from "../pages/Campus";
 import { Message } from "../pages/Message";
 import { CampusAbout } from "../pages/CampusAbout";
@@ -15,9 +15,9 @@ import { Home } from "../pages/Home";
 import { UserObjTypes } from "../types/UserObj.types";
 import { routes } from "../utils/constants";
 import { authService } from "../utils/firebase";
-import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { LogIn } from "./LogIn";
+import { MessageRoom } from "../pages/MessageRoom";
 
 export const Router: React.FC = () => {
   const [loginMode, setLoginMode] = useState(false);
@@ -84,9 +84,11 @@ export const Router: React.FC = () => {
         <Route path={routes.message} exact>
           <Message />
         </Route>
+        <Route path={routes.messageRoom()}>
+          <MessageRoom />
+        </Route>
       </Switch>
       {loginMode && <LogIn loginMode={loginMode} setLoginMode={setLoginMode} />}
-      <Footer />
     </BrowserRouter>
   );
 };

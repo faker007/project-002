@@ -25,6 +25,7 @@ import { routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
 import {
   deleteImgFromFirebase,
+  getFirestoreQuery,
   handleDeleteForumPost,
   isLoggedIn,
   loadGroupIns,
@@ -33,6 +34,13 @@ import {
 import { v4 as uuid } from "uuid";
 import { ForumPostComment } from "../components/ForumPostComment";
 import { PopUpLogin } from "../components/PopUpLogin";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  updateDoc,
+} from "@firebase/firestore";
 
 export const ForumPostDetail: React.FC = () => {
   const { forumGroup, postId } = useParams<{
@@ -57,11 +65,11 @@ export const ForumPostDetail: React.FC = () => {
 
   const loadPostFromId = async () => {
     try {
-      const query = dbService.collection("forumPost").where("id", "==", postId);
-      const result = await query.get();
+      const q = getFirestoreQuery("forumPost", "id", postId);
+      const result = await getDocs(q);
 
       for (const doc of result.docs) {
-        if (doc.exists) {
+        if (doc.exists()) {
           setPost({
             body: doc.data().body,
             comments: doc.data().comments,
@@ -89,15 +97,16 @@ export const ForumPostDetail: React.FC = () => {
 
   const loadCreator = async (creatorId: string) => {
     try {
-      const query = dbService.collection("user").where("uid", "==", creatorId);
-      const result = await query.get();
+      const q = getFirestoreQuery("user", "uid", creatorId);
+      const result = await getDocs(q);
 
       for (const doc of result.docs) {
-        if (doc.exists) {
+        if (doc.exists()) {
           setCreator({
             displayName: doc.data().displayName,
             email: doc.data().email,
             uid: doc.data().uid,
+            msgRoomIds: doc.data().msgRoomIds,
           });
         }
       }
@@ -109,14 +118,12 @@ export const ForumPostDetail: React.FC = () => {
   const loadComments = async () => {
     if (post) {
       try {
-        const query = dbService
-          .collection("forumComment")
-          .where("postID", "==", post.id);
-        const result = await query.get();
+        const q = getFirestoreQuery("forumComment", "postID", post.id);
+        const result = await getDocs(q);
 
         const arr: DB_COMMENT[] = [];
         for (const doc of result.docs) {
-          if (doc.exists) {
+          if (doc.exists()) {
             arr.push({
               body: doc.data().body,
               replyComments: doc.data().replyComments,
@@ -162,17 +169,15 @@ export const ForumPostDetail: React.FC = () => {
       };
 
       try {
-        await dbService.collection("forumComment").add(comment);
+        await addDoc(collection(dbService, "forumComment"), comment);
 
-        const postQuery = dbService
-          .collection("forumPost")
-          .where("id", "==", post.id);
-        const postResult = await postQuery.get();
+        const postQ = getFirestoreQuery("forumPost", "id", post.id);
+        const postResult = await getDocs(postQ);
 
-        for (const doc of postResult.docs) {
-          if (doc.exists) {
-            await dbService.doc(`forumPost/${doc.id}`).update({
-              comments: [...doc.data().comments, comment.id],
+        for (const docRef of postResult.docs) {
+          if (docRef.exists()) {
+            await updateDoc(doc(dbService, `forumPost/${docRef.id}`), {
+              comments: [...docRef.data().comments, comment.id],
             });
           }
         }
@@ -221,13 +226,13 @@ export const ForumPostDetail: React.FC = () => {
 
   const increaseViews = async () => {
     try {
-      const query = dbService.collection("forumPost").where("id", "==", postId);
-      const result = await query.get();
+      const q = getFirestoreQuery("forumPost", "id", postId);
+      const result = await getDocs(q);
 
-      for (const doc of result.docs) {
-        if (doc.exists) {
-          await dbService.doc(`forumPost/${doc.id}`).update({
-            views: +doc.get("views") + 1,
+      for (const docRef of result.docs) {
+        if (docRef.exists()) {
+          await updateDoc(doc(dbService, `forumPost/${docRef.id}`), {
+            views: +docRef.get("views") + 1,
           });
         }
       }

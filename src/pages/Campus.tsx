@@ -14,7 +14,16 @@ import { PopUpLogin } from "../components/PopUpLogin";
 import { DB_Group } from "../types/DBService.types";
 import { routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
-import { initGroups, isLoggedIn } from "../utils/utils";
+import { getFirestoreQuery, initGroups, isLoggedIn } from "../utils/utils";
+import {
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+  collection,
+  onSnapshot,
+  addDoc,
+} from "firebase/firestore";
 
 export const Campus: React.FC = () => {
   const [popUpLoginMode, setPopUpLoginMode] = useState(false);
@@ -23,8 +32,9 @@ export const Campus: React.FC = () => {
 
   const checkGroupParticipants = async (group: string): Promise<boolean> => {
     let ok = false;
-    const query = dbService.collection("group").where("enName", "==", group);
-    const queryResult = await query.get();
+    // const query = dbService.collection("group").where("enName", "==", group);
+    const q = getFirestoreQuery("group", "enName", group);
+    const queryResult = await getDocs(q);
 
     queryResult.forEach((doc) => {
       const data = doc.data();
@@ -46,18 +56,20 @@ export const Campus: React.FC = () => {
 
   const joinGroup = async (group: string): Promise<boolean> => {
     let ok = false;
-    const query = dbService.collection("group").where("enName", "==", group);
-    const queryResult = await query.get();
 
-    for (const doc of queryResult.docs) {
-      const documentRef = dbService.doc(`group/${doc.id}`);
+    const q = getFirestoreQuery("group", "enName", group);
+    const queryResult = await getDocs(q);
+
+    for (const docRef of queryResult.docs) {
+      const documentRef = doc(dbService, `group/${docRef.id}`);
       try {
-        await documentRef.update({
+        await updateDoc(documentRef, {
           participants: [
-            ...doc.data().participants,
+            ...docRef.data().participants,
             authService.currentUser?.uid,
           ],
         });
+
         ok = true;
       } catch (error) {
         console.log(error);
@@ -88,17 +100,20 @@ export const Campus: React.FC = () => {
 
   const loadGroupList = async () => {
     setLoading(true);
-    const groupList = await dbService.collection("group").get();
+    // const groupList = await dbService.collection("group").get();
+    const groupList = await getDocs(collection(dbService, "group"));
     const arr: DB_Group[] = [];
 
     for (const group of groupList.docs) {
-      const data: DB_Group = {
-        ...group.data(),
-        enName: group.data().enName,
-        korName: group.data().korName,
-      };
+      if (group.exists()) {
+        const data: DB_Group = {
+          ...group.data(),
+          enName: group.data().enName,
+          korName: group.data().korName,
+        };
 
-      arr.push(data);
+        arr.push(data);
+      }
     }
 
     setGroupList(arr);
@@ -107,15 +122,17 @@ export const Campus: React.FC = () => {
 
   useEffect(() => {
     loadGroupList();
-    dbService.collection("group").onSnapshot((groups) => {
+    onSnapshot(collection(dbService, "group"), (groups) => {
       const arr: DB_Group[] = [];
       for (const group of groups.docs) {
-        const data: DB_Group = {
-          ...group.data(),
-          enName: group.data().enName,
-          korName: group.data().korName,
-        };
-        arr.push(data);
+        if (group.exists()) {
+          const data: DB_Group = {
+            ...group.data(),
+            enName: group.data().enName,
+            korName: group.data().korName,
+          };
+          arr.push(data);
+        }
       }
       setGroupList(arr);
     });

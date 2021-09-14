@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { HeaderTypes } from "../types/Header.types";
 import { routes } from "../utils/constants";
 import { authService } from "../utils/firebase";
-import { getMinimizedStr } from "../utils/utils";
+import { getMinimizedStr, isLoggedIn } from "../utils/utils";
 import { FaceBookLogo, LinkLogo, TwitterLogo } from "./SocialComponents";
 
 export const Header: React.FC<HeaderTypes> = ({
@@ -38,6 +38,7 @@ export const Header: React.FC<HeaderTypes> = ({
       toast("성공적으로 로그아웃 했습니다.");
     } catch (error) {
       console.log(error);
+      //@ts-ignore
       toast.error(error);
     }
   };
@@ -106,18 +107,20 @@ export const Header: React.FC<HeaderTypes> = ({
         </Link>
         <div className="w-1/2">
           <ul className="w-full flex justify-end items-center">
-            <li className="mr-5">
+            <li className="mr-5 hover:underline">
               <Link to={routes.home}>메인</Link>
             </li>
-            <li className="mr-5">
+            <li className="mr-5 hover:underline">
               <Link to={routes.campus}>캠퍼스</Link>
             </li>
-            <li className="mr-5">
+            <li className="mr-5 hover:underline">
               <Link to={routes.forum}>게시판</Link>
             </li>
-            <li className="mr-5">
-              <Link to={routes.message}>쪽지함</Link>
-            </li>
+            {isLoggedIn() && (
+              <li className="mr-5 hover:underline">
+                <Link to={routes.message}>쪽지함</Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

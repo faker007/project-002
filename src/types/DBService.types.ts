@@ -2,6 +2,7 @@ export interface DB_UserTypes {
   uid: string;
   displayName: string | null;
   email: string | null;
+  msgRoomIds: string[];
 }
 
 export interface DB_Group {
