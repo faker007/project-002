@@ -1,8 +1,4 @@
-import {
-  faBell,
-  faChevronDown,
-  faUserCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
@@ -54,12 +50,6 @@ export const Header: React.FC<HeaderTypes> = ({
             userObj.uid !== "" ? handleDropDownMenuOpen : handleLoginMode
           }
         >
-          {userObj.uid !== "" && (
-            <FontAwesomeIcon
-              className="text-xl text-blue-500 mr-3"
-              icon={faBell}
-            />
-          )}
           <FontAwesomeIcon
             icon={faUserCircle}
             className="text-2xl text-blue-500"
@@ -93,13 +83,12 @@ export const Header: React.FC<HeaderTypes> = ({
           )}
         </div>
       </div>
-      {/* 헤더 아래쪽 곰돌이 부분 */}
       <div className="w-full py-5 flex justify-between items-center">
         <Link to={routes.home} className="flex items-center">
           <img
             draggable={false}
             src={
-              "https://firebasestorage.googleapis.com/v0/b/jido-button.appspot.com/o/249._%E1%84%89%E1%85%A5%E1%84%8B%E1%85%AE%E1%86%AF_%E1%84%89%E1%85%A5%E1%84%80%E1%85%A7%E1%86%BC%E1%84%83%E1%85%A2_%E1%84%85%E1%85%A9%E1%84%80%E1%85%A9.png?alt=media&token=ba715371-17b9-4559-b8cb-52a2deba8880"
+              "https://firebasestorage.googleapis.com/v0/b/seogyeong-time.appspot.com/o/headerImg.png?alt=media&token=bfc1a85d-611f-49e8-af86-d14f1cf0e06b"
             }
             width={150}
             height={150}

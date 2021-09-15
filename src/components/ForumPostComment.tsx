@@ -156,16 +156,6 @@ export const ForumPostComment: React.FC<ForumPostCommentTypes> = ({
         </div>
       </header>
       <main className="py-5" dangerouslySetInnerHTML={{ __html: body }}></main>
-      <footer className="flex items-center justify-start">
-        <div className="mr-3 cursor-pointer">
-          <FontAwesomeIcon className="mr-2 text-blue-500" icon={faShare} />
-          <span>댓글</span>
-        </div>
-        <div className="mr-3 cursor-pointer">
-          <FontAwesomeIcon className="mr-2 text-red-500" icon={faHeart} />
-          <span>댓글</span>
-        </div>
-      </footer>
     </div>
   );
 };

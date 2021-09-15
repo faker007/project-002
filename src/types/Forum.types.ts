@@ -32,3 +32,8 @@ export interface ForumPostCommentTypes {
   setRefetch: React.Dispatch<React.SetStateAction<boolean>>;
   setLoginMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+export interface ForumGroupPopUpTypes {
+  setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  forumGroup: ForumGroupTypes[];
+}

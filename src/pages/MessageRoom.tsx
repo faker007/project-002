@@ -3,16 +3,13 @@ import {
   collection,
   doc,
   DocumentData,
-  getDoc,
   getDocs,
   onSnapshot,
   QueryDocumentSnapshot,
   updateDoc,
 } from "@firebase/firestore";
-import { async } from "@firebase/util";
 import {
   faArrowAltCircleLeft,
-  faArrowAltCircleRight,
   faUserCircle,
 } from "@fortawesome/free-regular-svg-icons";
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";

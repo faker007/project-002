@@ -11,23 +11,11 @@ import { authService, dbService } from "../utils/firebase";
 import { deleteImgFromFirebase, findGroupId, isLoggedIn } from "../utils/utils";
 import { Editor } from "./Editor";
 import { v4 as uuid } from "uuid";
-import {
-  query,
-  where,
-  collection,
-  getDocs,
-  updateDoc,
-  doc,
-  deleteDoc,
-  addDoc,
-  getDoc,
-} from "firebase/firestore";
+import { collection, updateDoc, doc, addDoc, getDoc } from "firebase/firestore";
 
 export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
-  mode,
   setMode,
   group,
-  refetch,
   setRefetch,
   groupId,
 }) => {

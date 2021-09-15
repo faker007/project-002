@@ -22,7 +22,6 @@ import { authService, dbService } from "../utils/firebase";
 import { getFirestoreQuery, isLoggedIn } from "../utils/utils";
 import { v4 as uuid } from "uuid";
 import { MessageRoomBanner } from "../components/MessageRoomBanner";
-import { async } from "@firebase/util";
 
 export const Message: React.FC = () => {
   const [openPopUp, setOpenPopUp] = useState(false);

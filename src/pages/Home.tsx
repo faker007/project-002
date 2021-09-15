@@ -5,7 +5,7 @@ export const Home: React.FC = () => {
         <img
           draggable={false}
           className="mx-auto"
-          src="https://firebasestorage.googleapis.com/v0/b/jido-button.appspot.com/o/unnamed.png?alt=media&token=ae6e5221-06d7-4478-b855-3917bafedfba"
+          src="https://firebasestorage.googleapis.com/v0/b/seogyeong-time.appspot.com/o/mainHeroImg.png?alt=media&token=53ee0b31-ecdb-446b-8c88-c7bad0450859"
         />
       </div>
       <div className="mt-20 text-center ">

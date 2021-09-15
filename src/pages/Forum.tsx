@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { domainToASCII } from "url";
 import { ForumGroup } from "../components/ForumGroup";
+import { ForumGroupPopUp } from "../components/ForumGroupPopUp";
 import { LoginCore } from "../components/LoginCore";
 import { PopUpLogin } from "../components/PopUpLogin";
 import { DB_Group } from "../types/DBService.types";
@@ -26,8 +27,6 @@ export const Forum: React.FC = () => {
   const [loginMode, setLoginMode] = useState(false);
 
   const loadForumGroup = async (docs: any) => {
-    // const query = dbService.collection("forumGroup");
-    // const result = await query.get({ source: "server" });
     let arr: ForumGroupTypes[] = [];
 
     for (const doc of docs) {
@@ -41,16 +40,6 @@ export const Forum: React.FC = () => {
 
         arr.push(data);
       }
-    }
-
-    const freedomCommu = arr.find((elem) => elem.korName === "자유게시판");
-    if (freedomCommu) {
-      console.log("Freedom!");
-      console.log(freedomCommu);
-
-      const alteredArr = arr.filter((elem) => elem.korName !== "자유게시판");
-      alteredArr.unshift(freedomCommu);
-      arr = [...alteredArr];
     }
 
     setForumGroup([...arr]);
@@ -87,29 +76,14 @@ export const Forum: React.FC = () => {
   }, []);
 
   return (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="max-w-screen-lg mx-auto pb-20">
       {!loading ? (
         <>
           <section className="w-full flex items-center justify-between mb-5">
             <h1 className="text-3xl font-medium">게시판</h1>
-            <div className="w-1/5 border-b border-black">
-              <FontAwesomeIcon
-                className="text-xl text-gray-500 mb-1"
-                icon={faSearch}
-              />
-            </div>
           </section>
           <section className="relative w-full h-80  flex flex-col justify-center items-center  ">
-            <div
-              className="absolute top-0 left-0 w-full h-full bg-cover bg-center filter blur-sm"
-              style={{
-                backgroundImage: `url(${
-                  FORUM_HERO_IMGS[
-                    Math.floor(Math.random() * FORUM_HERO_IMGS.length)
-                  ]
-                })`,
-              }}
-            ></div>
+            <div className="bg-green-500 absolute top-0 left-0 w-full h-full bg-cover bg-center filter blur-sm "></div>
             <h1 className="z-10 text-6xl font-semibold mb-5 ">서경 대학교</h1>
             <h2 className="z-10 text-lg font-medium">
               멘토링, 과팅, 미팅, 소모임, 동아리, 스터디 등등의 교류활동이
@@ -132,35 +106,10 @@ export const Forum: React.FC = () => {
           </section>
           {/* 게시물 작성 클릭시 열리는 카테고리 선택 후 포스트 작성 이동 컴포넌트 */}
           {forumGroup.length > 0 && menuOpen && (
-            <div className="z-10 fixed top-0 left-0 w-full h-screen backdrop-filter backdrop-blur-sm flex justify-center items-center">
-              <div
-                onClick={() => setMenuOpen(false)}
-                className="fixed top-0 left-0 w-full h-screen bg-black opacity-50 z-0"
-              ></div>
-              <div className="max-w-screen-md bg-white w-full p-10  z-10">
-                <div className="flex items-center justify-end">
-                  <FontAwesomeIcon
-                    onClick={() => setMenuOpen(false)}
-                    icon={faTimesCircle}
-                    className="text-4xl hover:text-red-500 transition-all cursor-pointer"
-                  />
-                </div>
-                <h1 className="mb-10 text-3xl font-medium text-center">
-                  카테고리 선택
-                </h1>
-                <div className="grid grid-cols-4 gap-5  ">
-                  {forumGroup.map((elem, index) => (
-                    <Link
-                      className="border  border-gray-300 p-3 text-center hover:text-blue-800 transition-all ring-2 ring-gray-400 font-medium hover:opacity-60"
-                      key={index}
-                      to={routes.forumCreatePost(elem.enName)}
-                    >
-                      {elem.korName}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <ForumGroupPopUp
+              setMenuOpen={setMenuOpen}
+              forumGroup={forumGroup}
+            />
           )}
           {loginMode && (
             <PopUpLogin

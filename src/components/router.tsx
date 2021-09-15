@@ -3,10 +3,7 @@ import { useState } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { Campus } from "../pages/Campus";
 import { Message } from "../pages/Message";
-import { CampusAbout } from "../pages/CampusAbout";
 import { CampusDetail } from "../pages/CampusDetail";
-import { CampusMedia } from "../pages/CampusMedia";
-import { CampusMembers } from "../pages/CampusMembers";
 import { Forum } from "../pages/Forum";
 import { ForumCreatePost } from "../pages/ForumCreatePost";
 import { ForumDetail } from "../pages/ForumDetail";
@@ -56,15 +53,6 @@ export const Router: React.FC = () => {
         </Route>
         <Route path={routes.campusDetail()}>
           <CampusDetail />
-        </Route>
-        <Route path={routes.campusMembers()}>
-          <CampusMembers />
-        </Route>
-        <Route path={routes.campusMedia()}>
-          <CampusMedia />
-        </Route>
-        <Route path={routes.campusAbout()}>
-          <CampusAbout />
         </Route>
         <Route path={routes.forumDetail()} exact>
           <ForumDetail />

@@ -283,7 +283,7 @@ export const ForumPostDetail: React.FC = () => {
   }, [menuOpen]);
 
   return (
-    <div className="max-w-screen-lg mx-auto">
+    <div className="max-w-screen-lg mx-auto pb-20">
       {loading ? (
         <div className="text-center">
           <FontAwesomeIcon
@@ -438,13 +438,6 @@ export const ForumPostDetail: React.FC = () => {
                     >
                       댓글
                     </button>
-                    <button className="hover:opacity-70 transition-all w-full border border-blue-800 py-2">
-                      <FontAwesomeIcon
-                        className="text-blue-800 text-xl mr-3"
-                        icon={faBell}
-                      />
-                      <span className="text-blue-800">게시물 팔로우</span>
-                    </button>
                   </section>
                   <section className="w-full border border-gray-300 p-5">
                     <div className="mb-5">
@@ -465,31 +458,6 @@ export const ForumPostDetail: React.FC = () => {
                   <section className="mt-5 p-5 w-full border border-gray-300">
                     <h1 className="mb-3 font-medium">카테고리</h1>
                     <ul>
-                      {/* <li className="mb-3 text-sm hover:text-blue-800 transition-all">
-                        <Link to={routes.forumDetail("jayugesipan")}>
-                          자유게시판
-                        </Link>
-                      </li>
-                      <li className="mb-3 text-sm hover:text-blue-800 transition-all">
-                        <Link to={routes.forumDetail("mentoring-cunceon")}>
-                          멘토링 (춘천)
-                        </Link>
-                      </li>
-                      <li className="mb-3 text-sm hover:text-blue-800 transition-all">
-                        <Link to={routes.forumDetail("gwating-cunceon")}>
-                          과팅 (춘천)
-                        </Link>
-                      </li>
-                      <li className="mb-3 text-sm hover:text-blue-800 transition-all">
-                        <Link to={routes.forumDetail("miting-cunceon")}>
-                          미팅 (춘천)
-                        </Link>
-                      </li>
-                      <li className="mb-3 text-sm hover:text-blue-800 transition-all">
-                        <Link to={routes.forumDetail("somoim-cunceon")}>
-                          소모임 (춘천)
-                        </Link>
-                      </li> */}
                       <li className="mb-3 text-sm hover:text-blue-800 transition-all">
                         <Link to={routes.forum}>전체 카테고리 보기</Link>
                       </li>

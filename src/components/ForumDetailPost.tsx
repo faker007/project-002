@@ -64,7 +64,7 @@ export const ForumDetailPost: React.FC<ForumDetailPostTypes> = ({
   return (
     <div
       className="grid border-b border-gray-300 py-3 mx-5"
-      style={{ gridTemplateColumns: "3fr 1fr 1fr" }}
+      style={{ gridTemplateColumns: "3fr 0.5fr 1fr" }}
     >
       <section>
         <Link
@@ -79,7 +79,6 @@ export const ForumDetailPost: React.FC<ForumDetailPostTypes> = ({
       </section>
       <section className="flex items-center justify-between">
         <span className="mr-3">{comments.length}</span>
-        <span className="mr-3">{0}</span>
         <span className="mr-3">{views}</span>
       </section>
       <section className="ml-8 flex justify-between items-center relative">

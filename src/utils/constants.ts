@@ -15,14 +15,6 @@ export const routes = {
       ? `/group/${campus}/discussion`
       : `/group/:campus/discussion`;
   },
-  campusMedia: (campus?: string): string => {
-    return Boolean(campus) ? `/group/${campus}/media` : `/group/:campus/media`;
-  },
-  campusMembers: (campus?: string): string => {
-    return Boolean(campus)
-      ? `/group/${campus}/members`
-      : `/group/:campus/members`;
-  },
   campusAbout: (campus?: string): string => {
     return Boolean(campus) ? `/group/${campus}/about` : `/group/:campus/about`;
   },

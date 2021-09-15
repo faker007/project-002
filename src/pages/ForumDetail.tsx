@@ -162,36 +162,9 @@ export const ForumDetail: React.FC = () => {
               <FontAwesomeIcon icon={faChevronRight} className="mx-5" />
               <h1>{group?.korName}</h1>
             </div>
-            <div className="w-1/4 flex items-center ">
-              <div className="border-b border-black w-5/6">
-                <FontAwesomeIcon
-                  className="text-xl text-gray-500 mb-1"
-                  icon={faSearch}
-                />
-              </div>
-              <div className="w-1/6 flex justify-center items-center">
-                <FontAwesomeIcon
-                  icon={faEllipsisV}
-                  className="text-xl text-gray-500"
-                />
-              </div>
-            </div>
           </header>
-          {forumGroup === "jayugesipan" && (
-            <section
-              className="w-full h-80 bg-cover bg-center relative flex justify-center items-center"
-              style={{
-                backgroundImage: `url("https://firebasestorage.googleapis.com/v0/b/campus-mate-c41f8.appspot.com/o/jagebig.webp?alt=media&token=7c90f12c-7ee8-4b73-a998-b056bfd5c8ca")`,
-              }}
-            >
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-30 "></div>
-              <h1 className="z-10 text-white text-xl">
-                게시글을 새로 작성하거나 편집해보세요.
-              </h1>
-            </section>
-          )}
           {posts.length > 0 ? (
-            <section className="border border-gray-300 mt-20">
+            <section className="border border-gray-300 mt-10">
               <div className="flex items-center justify-between p-3 border-b border-gray-300">
                 <div className="flex items-center">
                   <h1 className="text-gray-500">정렬:</h1>
@@ -274,12 +247,11 @@ export const ForumDetail: React.FC = () => {
               </div>
               <div
                 className="grid py-3 border-b border-gray-300"
-                style={{ gridTemplateColumns: "3fr 1fr 1fr" }}
+                style={{ gridTemplateColumns: "3fr 0.5fr 1fr" }}
               >
                 <section></section>
-                <section className="flex justify-between items-center ">
+                <section className="flex items-center justify-between ">
                   <FontAwesomeIcon className="mr-5" icon={faCommentAlt} />
-                  <FontAwesomeIcon className="mr-5" icon={faHeart} />
                   <FontAwesomeIcon className="mr-5" icon={faEye} />
                 </section>
                 <section className="ml-5 flex items-center justify-start ">
