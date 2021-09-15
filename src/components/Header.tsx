@@ -5,19 +5,19 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import { HeaderTypes } from "../types/Header.types";
 import { routes } from "../utils/constants";
 import { authService } from "../utils/firebase";
 import { getMinimizedStr, isLoggedIn } from "../utils/utils";
-import { FaceBookLogo, LinkLogo, TwitterLogo } from "./SocialComponents";
 
 export const Header: React.FC<HeaderTypes> = ({
   loginModeType: { loginMode, setLoginMode },
   userObj,
 }) => {
   const [openMenu, setOpenMenu] = useState(false);
+  const history = useHistory();
 
   const handleLoginMode = () => {
     if (loginMode) {
@@ -35,6 +35,7 @@ export const Header: React.FC<HeaderTypes> = ({
     console.log("logout!");
     try {
       await authService.signOut();
+      history.push(routes.home);
       toast("성공적으로 로그아웃 했습니다.");
     } catch (error) {
       console.log(error);
@@ -44,7 +45,7 @@ export const Header: React.FC<HeaderTypes> = ({
   };
 
   return (
-    <div className="w-full py-12 pb-20 px-24">
+    <div className="w-full py-12  px-24">
       {/* 헤더 위쪽 로그인 파트 */}
       <div className="w-full  pb-3 border-b border-black flex items-center justify-end">
         <div

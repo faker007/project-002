@@ -10,7 +10,11 @@ import {
   updateDoc,
 } from "@firebase/firestore";
 import { async } from "@firebase/util";
-import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
+import {
+  faArrowAltCircleLeft,
+  faArrowAltCircleRight,
+  faUserCircle,
+} from "@fortawesome/free-regular-svg-icons";
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
@@ -18,8 +22,10 @@ import { useHistory, useParams } from "react-router";
 import { toast } from "react-toastify";
 import { DB_MESSAGE, DB_MSGROOM } from "../types/Message.types";
 import { authService, dbService } from "../utils/firebase";
-import { getFirestoreQuery, isLoggedIn } from "../utils/utils";
+import { getFirestoreQuery, isLoggedIn, timeCalc } from "../utils/utils";
 import { v4 as uuid } from "uuid";
+import { DB_UserTypes } from "../types/DBService.types";
+import { routes } from "../utils/constants";
 
 export const MessageRoom: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +34,33 @@ export const MessageRoom: React.FC = () => {
   const [msgs, setMsgs] = useState<DB_MESSAGE[]>([]);
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
+  const [opponentUser, setOpponentUser] = useState<DB_UserTypes | null>(null);
+
+  const loadOpponentUser = async () => {
+    try {
+      const opponentUid = msgRoom?.participantIds.find(
+        (elem) => elem !== authService.currentUser?.uid
+      );
+
+      if (opponentUid) {
+        const q = getFirestoreQuery("user", "uid", opponentUid);
+        const result = await getDocs(q);
+        for (const item of result.docs) {
+          if (item.exists()) {
+            const opponentUser: DB_UserTypes = {
+              uid: item.get("uid"),
+              displayName: item.get("displayName"),
+              email: item.get("email"),
+              msgRoomIds: item.get("msgRoomIds"),
+            };
+            setOpponentUser(opponentUser);
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const loadMsgRoom = async (docs: QueryDocumentSnapshot<DocumentData>[]) => {
     try {
@@ -163,8 +196,15 @@ export const MessageRoom: React.FC = () => {
   useEffect(() => {
     if (msgRoom !== null) {
       loadMsgs();
+      loadOpponentUser();
     }
   }, [msgRoom]);
+
+  useEffect(() => {
+    if (msgs.length > 0) {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  }, [msgs]);
 
   return (
     <div className="max-w-screen-lg mx-auto pb-20">
@@ -176,60 +216,93 @@ export const MessageRoom: React.FC = () => {
           />
         </div>
       ) : (
-        <main className="w-full p-5 bg-gray-100">
-          <section className="w-full">
-            {msgs
-              .sort((a, b) => a.createdAt - b.createdAt)
-              .map((elem, index) => (
-                <div
-                  key={index}
-                  className={`w-full flex my-3 items-center ${
-                    elem.fromUserId === authService.currentUser?.uid
-                      ? "justify-end"
-                      : "justify-start"
-                  }`}
-                >
+        <>
+          <header className="w-full">
+            <div className="w-full flex items-center justify-between border border-gray-300 bg-green-500 p-5 rounded-t-2xl text-white">
+              <FontAwesomeIcon
+                onClick={() => history.push(routes.message)}
+                icon={faArrowAltCircleLeft}
+                className="text-3xl cursor-pointer hover:text-red-500 transition-all hover:scale-110 transform"
+              />
+              <h1 className="text-xl font-medium">
+                {opponentUser?.email}님과의 대화
+              </h1>
+            </div>
+          </header>
+          <main className="w-full p-5 bg-gray-100 rounded-b-2xl shadow-inner">
+            <section className="w-full">
+              {msgs
+                .sort((a, b) => a.createdAt - b.createdAt)
+                .map((elem, index) => (
                   <div
-                    className={`border-2 ${
+                    key={index}
+                    className={`w-full flex my-3 items-center ${
                       elem.fromUserId === authService.currentUser?.uid
-                        ? "border-green-500"
-                        : "border-red-500"
-                    } flex justify-center items-center p-3`}
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
                   >
-                    <FontAwesomeIcon
-                      icon={faUserCircle}
-                      className={`${
-                        elem.fromUserId === authService.currentUser?.uid
-                          ? "text-green-500"
-                          : "text-red-500"
-                      } text-3xl mr-3`}
-                    />
-                    <span>{elem.textBody}</span>
+                    <div className="flex items-end">
+                      {elem.fromUserId === authService.currentUser?.uid && (
+                        <div className="mr-1 text-xs p-1 px-2 bg-green-300  rounded-full">
+                          {timeCalc(elem.createdAt)}
+                        </div>
+                      )}
+                      <div
+                        className={`p-3 ${
+                          elem.fromUserId === authService.currentUser?.uid
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-200 text-black"
+                        }  rounded-2xl flex items-center`}
+                      >
+                        {opponentUser?.uid === elem.fromUserId && (
+                          <div className="flex items-center justify-center">
+                            <FontAwesomeIcon
+                              icon={faUserCircle}
+                              className="text-2xl mr-2"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          {opponentUser?.uid === elem.fromUserId && (
+                            <h1 className="text-sm font-medium">
+                              {opponentUser?.email}
+                            </h1>
+                          )}
+                          <h1 className="text-lg">{elem.textBody}</h1>
+                        </div>
+                      </div>
+                      {opponentUser?.uid === elem.fromUserId && (
+                        <div className="ml-1 text-xs p-1 px-2 bg-gray-300 rounded-full">
+                          {timeCalc(elem.createdAt)}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-          </section>
-          <form
-            onSubmit={handleSubmitToCreateMsg}
-            className="w-full flex mt-5 shadow-md"
-          >
-            <input
-              onChange={(e) => setInput(e.target.value)}
-              value={input}
-              type={"text"}
-              placeholder={"메시지를 입력해 주세요."}
-              className="w-full p-5 outline-none"
-            />
-            <button
-              type={"submit"}
-              className={`text-2xl  px-12 ${
-                input.length > 0 ? "bg-green-500" : "bg-gray-300"
-              } transition-all`}
+                ))}
+            </section>
+            <form
+              onSubmit={handleSubmitToCreateMsg}
+              className="w-full flex mt-5 shadow-md rounded-2xl"
             >
-              🔥
-            </button>
-          </form>
-        </main>
+              <input
+                onChange={(e) => setInput(e.target.value)}
+                value={input}
+                type={"text"}
+                placeholder={"메시지를 입력해 주세요."}
+                className="w-full p-5 outline-none rounded-tl-2xl rounded-bl-2xl"
+              />
+              <button
+                type={"submit"}
+                className={`text-2xl  px-12 ${
+                  input.length > 0 ? "bg-green-500" : "bg-gray-300"
+                } transition-all rounded-tr-2xl rounded-br-2xl`}
+              >
+                🔥
+              </button>
+            </form>
+          </main>
+        </>
       )}
     </div>
   );

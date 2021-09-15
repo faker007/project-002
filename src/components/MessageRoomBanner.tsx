@@ -1,4 +1,5 @@
 import { getDocs } from "@firebase/firestore";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
@@ -53,7 +54,7 @@ export const MessageRoomBanner: React.FC<MessageRoomBannerTypes> = ({
   return (
     <div
       onClick={handleClickToMoveMsgRoom}
-      className="w-full border border-gray-300 p-5 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all cursor-pointer mb-5"
+      className="w-full rounded-2xl border border-gray-300 p-5  hover:bg-green-500 hover:text-white hover:border-green-500 transition-all cursor-pointer mb-5"
     >
       {loading ? (
         <div className="w-full text-center">
@@ -63,8 +64,15 @@ export const MessageRoomBanner: React.FC<MessageRoomBannerTypes> = ({
           />
         </div>
       ) : (
-        <div>
-          <h1>{opponentUser?.email}의 대화</h1>
+        <div className="w-full flex items-center justify-between">
+          <h1>{opponentUser?.email}님과의 대화</h1>
+          <div className="flex items-center">
+            <FontAwesomeIcon
+              icon={faComment}
+              className="text-2xl text-green-600 mr-2"
+            />
+            <span>{msgIds.length}</span>
+          </div>
         </div>
       )}
     </div>

@@ -2,10 +2,8 @@ import {
   addDoc,
   collection,
   doc,
-  DocumentData,
   getDocs,
   onSnapshot,
-  QueryDocumentSnapshot,
   updateDoc,
 } from "@firebase/firestore";
 import {
@@ -23,8 +21,8 @@ import { routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
 import { getFirestoreQuery, isLoggedIn } from "../utils/utils";
 import { v4 as uuid } from "uuid";
-import { async } from "@firebase/util";
 import { MessageRoomBanner } from "../components/MessageRoomBanner";
+import { async } from "@firebase/util";
 
 export const Message: React.FC = () => {
   const [openPopUp, setOpenPopUp] = useState(false);
@@ -86,6 +84,32 @@ export const Message: React.FC = () => {
     }
   };
 
+  const checkUserInMsgRoom = async (
+    msgRoomIds: string[],
+    targetUid: string
+  ): Promise<string | null> => {
+    for (const msgRoomId of msgRoomIds) {
+      const msgRoomQ = getFirestoreQuery("msgRoom", "id", msgRoomId);
+      const msgRoomR = await getDocs(msgRoomQ);
+      for (const msgRoomItem of msgRoomR.docs) {
+        if (msgRoomItem.exists()) {
+          const participantIds = msgRoomItem.get("participantIds");
+          if (Array.isArray(participantIds) && participantIds.length > 0) {
+            const me = participantIds.find(
+              (elem) => elem === authService.currentUser?.uid
+            );
+            const you = participantIds.find((elem) => elem === targetUid);
+            if (Boolean(me) && Boolean(you)) {
+              return msgRoomItem.get("id");
+            }
+          }
+        }
+      }
+    }
+
+    return null;
+  };
+
   const handleCreateMsgRoom = async (uid: string) => {
     if (!isLoggedIn()) {
       toast.error("해당 기능은 로그인 이후에 이용 가능합니다.");
@@ -94,6 +118,22 @@ export const Message: React.FC = () => {
     if (uid === "" || uid === null) {
       toast.error("올바른 유저가 아닙니다.");
       return;
+    }
+
+    // 만약에 이미 해당 uid를 가진 유저와 챗룸을 유지하고 있다면 새롭게 챗룸을 만드는게 아니라 해당 챗룸으로 이동시켜주어야함.
+    if (authService.currentUser) {
+      const q = getFirestoreQuery("user", "uid", authService.currentUser.uid);
+      const result = await getDocs(q);
+      for (const item of result.docs) {
+        if (item.exists()) {
+          const msgRoomIds = item.get("msgRoomIds");
+          const targetRoomId = await checkUserInMsgRoom(msgRoomIds, uid);
+          if (targetRoomId !== null) {
+            history.push(routes.messageRoom(targetRoomId));
+            return;
+          }
+        }
+      }
     }
 
     try {
@@ -206,7 +246,7 @@ export const Message: React.FC = () => {
         <h1 className="text-3xl font-medium">메세지</h1>
         <div
           onClick={handleClickToOpenMessageChat}
-          className="text-lg border border-gray-300 p-3 hover:bg-green-500 hover:text-white cursor-pointer transition-all"
+          className="text-lg rounded-2xl border border-gray-300 p-3 hover:bg-green-500 hover:text-white cursor-pointer transition-all"
         >
           <FontAwesomeIcon className="mr-3" icon={faPlusSquare} />
           <span>메세지 보내기</span>
@@ -248,7 +288,7 @@ export const Message: React.FC = () => {
                       <div
                         onClick={() => handleCreateMsgRoom(elem.uid)}
                         key={index}
-                        className="w-full border border-gray-500 p-3 mb-3 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all cursor-pointer"
+                        className="w-full rounded-2xl border border-gray-500 p-3 mb-3 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all cursor-pointer"
                       >
                         <h1>{elem.email}</h1>
                       </div>
