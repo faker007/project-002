@@ -1,7 +1,7 @@
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
-import { LoginModeTypes } from "../types/LoginMode.types";
+import { LoginModeTypes } from "../types/LoginTypes";
 import { LoginCore } from "./LoginCore";
 
 export const LogIn: React.FC<LoginModeTypes> = ({

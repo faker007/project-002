@@ -1,4 +1,4 @@
-import { LoginCoreSignInModeTypes } from "../types/LoginCoreSignInMode.types";
+import { LoginCoreSignInModeTypes } from "../types/LoginTypes";
 
 export const LoginCoreSignInMode: React.FC<LoginCoreSignInModeTypes> = ({
   commuDetail,

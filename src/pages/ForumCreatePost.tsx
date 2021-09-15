@@ -11,7 +11,6 @@ import { useEffect } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Editor } from "../components/Editor";
-import { ForumGroupTypes, ForumPostTypes } from "../types/Forum.types";
 import { routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
 import {
@@ -28,10 +27,11 @@ import {
   getDoc,
   updateDoc,
 } from "@firebase/firestore";
+import { DB_ForumGroup, DB_ForumPost } from "../types/DBService.types";
 
 export const ForumCreatePost: React.FC = () => {
   const { forumGroup } = useParams<{ forumGroup: string }>();
-  const [group, setGroup] = useState<ForumGroupTypes>();
+  const [group, setGroup] = useState<DB_ForumGroup>();
   const [loading, setLoading] = useState(false);
   const [postTitle, setPostTitle] = useState<string>("");
   const [editorValue, setEditorValue] = useState<string>("");
@@ -64,7 +64,7 @@ export const ForumCreatePost: React.FC = () => {
       return;
     }
 
-    const post: ForumPostTypes = {
+    const post: DB_ForumPost = {
       body: editorValue,
       comments: [],
       createdAt: Date.now(),

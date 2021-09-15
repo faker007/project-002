@@ -19,8 +19,12 @@ import { useEffect } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Editor } from "../components/Editor";
-import { DB_COMMENT, DB_UserTypes } from "../types/DBService.types";
-import { ForumGroupTypes, ForumPostTypes } from "../types/Forum.types";
+import {
+  DB_COMMENT,
+  DB_ForumGroup,
+  DB_ForumPost,
+  DB_UserTypes,
+} from "../types/DBService.types";
 import { routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
 import {
@@ -48,8 +52,8 @@ export const ForumPostDetail: React.FC = () => {
     postId: string;
   }>();
 
-  const [post, setPost] = useState<ForumPostTypes | null>(null);
-  const [group, setGroup] = useState<ForumGroupTypes>();
+  const [post, setPost] = useState<DB_ForumPost | null>(null);
+  const [group, setGroup] = useState<DB_ForumGroup>();
   const [loading, setLoading] = useState(false);
   const [creator, setCreator] = useState<DB_UserTypes | null>(null);
   const [commentEditorValue, setCommentEditorValue] = useState<string>("");

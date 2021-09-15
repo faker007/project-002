@@ -1,4 +1,4 @@
-import { LoginModeTypes } from "./LoginMode.types";
+import { LoginModeTypes } from "./LoginTypes";
 import { UserObjTypes } from "./UserObj.types";
 
 export interface HeaderTypes {

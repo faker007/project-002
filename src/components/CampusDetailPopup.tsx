@@ -5,13 +5,13 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { CampusDetailPopupTypes } from "../types/CampusDetail.types";
 import { DB_POST } from "../types/DBService.types";
 import { authService, dbService } from "../utils/firebase";
 import { deleteImgFromFirebase, findGroupId, isLoggedIn } from "../utils/utils";
 import { Editor } from "./Editor";
 import { v4 as uuid } from "uuid";
 import { collection, updateDoc, doc, addDoc, getDoc } from "firebase/firestore";
+import { CampusDetailPopupTypes } from "../types/Campus.types";
 
 export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
   setMode,

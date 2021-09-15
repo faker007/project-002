@@ -17,11 +17,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { toast } from "react-toastify";
-import { DB_MESSAGE, DB_MSGROOM } from "../types/Message.types";
 import { authService, dbService } from "../utils/firebase";
 import { getFirestoreQuery, isLoggedIn, timeCalc } from "../utils/utils";
 import { v4 as uuid } from "uuid";
-import { DB_UserTypes } from "../types/DBService.types";
+import { DB_MESSAGE, DB_MSGROOM, DB_UserTypes } from "../types/DBService.types";
 import { routes } from "../utils/constants";
 
 export const MessageRoom: React.FC = () => {
@@ -30,6 +29,7 @@ export const MessageRoom: React.FC = () => {
   const [msgRoom, setMsgRoom] = useState<DB_MSGROOM | null>(null);
   const [msgs, setMsgs] = useState<DB_MESSAGE[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sendLoading, setSendLoading] = useState(false);
   const [input, setInput] = useState("");
   const [opponentUser, setOpponentUser] = useState<DB_UserTypes | null>(null);
 
@@ -120,6 +120,8 @@ export const MessageRoom: React.FC = () => {
     } finally {
       setMsgs(container);
       setLoading(false);
+      setSendLoading(false);
+      window.scrollTo(0, document.body.scrollHeight);
     }
   };
 
@@ -151,6 +153,7 @@ export const MessageRoom: React.FC = () => {
 
   const handleSubmitToCreateMsg = async (e: any) => {
     e.preventDefault();
+    setSendLoading(true);
 
     if (!isLoggedIn()) {
       toast.error("해당 기능은 로그인 후에 이용할 수 있습니다.");
@@ -295,7 +298,14 @@ export const MessageRoom: React.FC = () => {
                   input.length > 0 ? "bg-green-500" : "bg-gray-300"
                 } transition-all rounded-tr-2xl rounded-br-2xl`}
               >
-                🔥
+                {sendLoading ? (
+                  <FontAwesomeIcon
+                    icon={faCircleNotch}
+                    className="animate-spin text-white"
+                  />
+                ) : (
+                  "🔥"
+                )}
               </button>
             </form>
           </main>

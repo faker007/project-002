@@ -1,27 +1,8 @@
 import React from "react";
-import { DB_COMMENT } from "./DBService.types";
-
-export interface ForumGroupTypes {
-  enName: string;
-  korName: string;
-  posts: string[];
-  views: number;
-}
-
-export interface ForumPostTypes {
-  body: string;
-  comments: string[];
-  createdAt: number;
-  creatorId: string;
-  forumGroupId: string;
-  id: string;
-  views: number;
-  title: string;
-  imgUrlList: string[];
-}
+import { DB_COMMENT, DB_ForumGroup, DB_ForumPost } from "./DBService.types";
 
 export interface ForumDetailPostTypes {
-  post: ForumPostTypes;
+  post: DB_ForumPost;
   forumGroup: string;
   setRefetch: React.Dispatch<React.SetStateAction<boolean>>;
   setLoginMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,5 +16,5 @@ export interface ForumPostCommentTypes {
 
 export interface ForumGroupPopUpTypes {
   setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  forumGroup: ForumGroupTypes[];
+  forumGroup: DB_ForumGroup[];
 }

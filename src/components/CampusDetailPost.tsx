@@ -8,7 +8,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useState } from "react";
-import { CampusDetailPostTypes } from "../types/CampusDetail.types";
 import { DB_COMMENT, DB_UserTypes } from "../types/DBService.types";
 import { authService, dbService } from "../utils/firebase";
 import {
@@ -32,6 +31,7 @@ import {
   getDoc,
   deleteDoc,
 } from "firebase/firestore";
+import { CampusDetailPostTypes } from "../types/Campus.types";
 
 export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
   post: { groupId, comments: commentIds, createdAt, body, creatorId, id },

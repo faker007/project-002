@@ -1,4 +1,4 @@
-import { LoginCoreLoginModeTypes } from "../types/LoginCoreLoginMode.types";
+import { LoginCoreLoginModeTypes } from "../types/LoginTypes";
 
 export const LoginCoreLoginMode: React.FC<LoginCoreLoginModeTypes> = ({
   setSignInMode,

@@ -12,7 +12,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PopUpLogin } from "../components/PopUpLogin";
 import { DB_Group } from "../types/DBService.types";
-import { routes } from "../utils/constants";
+import { CAMPUS_GROUPS, routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
 import { getFirestoreQuery, initGroups, isLoggedIn } from "../utils/utils";
 import {
@@ -142,25 +142,8 @@ export const Campus: React.FC = () => {
     <main className="max-w-screen-lg mx-auto">
       <section className="flex justify-between items-center mb-5 ">
         <h1 className="text-3xl">그룹</h1>
-        {/* <div className="cursor-pointer">
-          <FontAwesomeIcon className="mr-2" icon={faPlus} />
-          <span>그룹 추가</span>
-        </div> */}
       </section>
       <section className="border-t border-black">
-        {/* <div className="flex items-center justify-between border-b border-black pb-5">
-          <div className="flex items-center">
-            <span>정렬:</span>
-            <div className="flex items-center cursor-pointer">
-              <h2 className="pl-3 pr-10">최근활동</h2>
-              <FontAwesomeIcon icon={faChevronDown} />
-            </div>
-          </div>
-          <FontAwesomeIcon
-            className="text-gray-500 text-xl cursor-pointer"
-            icon={faSearch}
-          />
-        </div> */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
             <FontAwesomeIcon

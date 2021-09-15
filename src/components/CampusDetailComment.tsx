@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { CampusDetailCommentTypes } from "../types/CampusDetail.types";
 import { DB_UserTypes } from "../types/DBService.types";
 import { authService, dbService } from "../utils/firebase";
 import {
@@ -27,6 +26,7 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
+import { CampusDetailCommentTypes } from "../types/Campus.types";
 
 export const CampusDetailComment: React.FC<CampusDetailCommentTypes> = ({
   comment: { postID, replyComments, createdAt, body, creatorId, id },

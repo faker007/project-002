@@ -17,7 +17,6 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ForumDetailPost } from "../components/ForumDetailPost";
-import { ForumGroupTypes, ForumPostTypes } from "../types/Forum.types";
 import { routes } from "../utils/constants";
 import { dbService } from "../utils/firebase";
 import {
@@ -29,11 +28,12 @@ import {
 import { useHistory } from "react-router-dom";
 import { PopUpLogin } from "../components/PopUpLogin";
 import { doc, getDocs, updateDoc } from "@firebase/firestore";
+import { DB_ForumGroup, DB_ForumPost } from "../types/DBService.types";
 
 export const ForumDetail: React.FC = () => {
   const { forumGroup } = useParams<{ forumGroup: string }>();
-  const [posts, setPosts] = useState<ForumPostTypes[]>([]);
-  const [group, setGroup] = useState<ForumGroupTypes | null>(null);
+  const [posts, setPosts] = useState<DB_ForumPost[]>([]);
+  const [group, setGroup] = useState<DB_ForumGroup | null>(null);
   const [loading, setLoading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const [refetchPosts, setRefetchPosts] = useState(false);
@@ -43,7 +43,7 @@ export const ForumDetail: React.FC = () => {
   const loadForumGroupPosts = async () => {
     if (group) {
       try {
-        const arr: ForumPostTypes[] = [];
+        const arr: DB_ForumPost[] = [];
 
         const q = getFirestoreQuery(
           "forumPost",
@@ -54,7 +54,7 @@ export const ForumDetail: React.FC = () => {
 
         for (const doc of result.docs) {
           if (doc.exists()) {
-            const elem: ForumPostTypes = {
+            const elem: DB_ForumPost = {
               body: doc.data().body,
               comments: doc.data().comments,
               createdAt: doc.data().createdAt,

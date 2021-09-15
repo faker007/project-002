@@ -13,12 +13,11 @@ import { CampusDetailPopup } from "../components/CampusDetailPopup";
 import { CampusDetailPost } from "../components/CampusDetailPost";
 import { CampusHeader } from "../components/CampusHeader";
 import { PopUpLogin } from "../components/PopUpLogin";
-import { CampusDetailUseParamsTypes } from "../types/CampusDetail.types";
-import { CampusTab } from "../types/CampusHeader.types";
 import { DB_POST } from "../types/DBService.types";
 import { authService, dbService } from "../utils/firebase";
 import { findGroupId, getFirestoreQuery, isLoggedIn } from "../utils/utils";
 import { getDocs } from "firebase/firestore";
+import { CampusDetailUseParamsTypes, CampusTab } from "../types/Campus.types";
 
 export const CampusDetail: React.FC = () => {
   const { campus } = useParams<CampusDetailUseParamsTypes>();

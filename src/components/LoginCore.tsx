@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { DB_UserTypes } from "../types/DBService.types";
-import { LoginModeTypes } from "../types/LoginMode.types";
 import { authService, dbService } from "../utils/firebase";
 import {
   createUserWithEmailAndPassword,
@@ -10,6 +9,7 @@ import {
 import { addDoc, collection } from "firebase/firestore";
 import { LoginCoreSignInMode } from "./LoginCoreSignInMode";
 import { LoginCoreLoginMode } from "./LoginCoreLoginMode";
+import { LoginModeTypes } from "../types/LoginTypes";
 
 export const LoginCore: React.FC<LoginModeTypes> = ({
   loginMode,

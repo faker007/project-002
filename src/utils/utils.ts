@@ -1,8 +1,12 @@
 import moment from "moment";
 import { toast } from "react-toastify";
-import { DB_Group, DB_UserTypes } from "../types/DBService.types";
-import { ForumGroupTypes, ForumPostTypes } from "../types/Forum.types";
-import { CAMPUS_GROUPS } from "./constants";
+import {
+  DB_ForumGroup,
+  DB_ForumPost,
+  DB_Group,
+  DB_UserTypes,
+} from "../types/DBService.types";
+import { CAMPUS_GROUPS, FORUM_GROUPS } from "./constants";
 import { authService, dbService, storageService } from "./firebase";
 import {
   query,
@@ -54,14 +58,12 @@ export const initGroups = async () => {
       posts: [],
     };
     await addDoc(collection(dbService, "group"), dbGroup);
-    // await dbService.collection("group").add(dbGroup);
   }
 };
 
 export const findGroupId = async (group: string): Promise<string> => {
   let result = "";
   try {
-    // const query = dbService.collection("group").where("enName", "==", group);
     const q = query(
       collection(dbService, "group"),
       where("enName", "==", group)
@@ -84,9 +86,6 @@ export const findGroupId = async (group: string): Promise<string> => {
 export const findForumGroupId = async (group: string): Promise<string> => {
   let result = "";
   try {
-    // const query = dbService
-    //   .collection("forumGroup")
-    //   .where("enName", "==", group);
     const q = query(
       collection(dbService, "forumGroup"),
       where("enName", "==", group)
@@ -109,7 +108,6 @@ export const getUserFromUid = async (
   uid: string
 ): Promise<DB_UserTypes | null> => {
   try {
-    // const query = dbService.collection("user").where("uid", "==", uid);
     const q = query(collection(dbService, "user"), where("uid", "==", uid));
     const queryResult = await getDocs(q);
 
@@ -164,11 +162,8 @@ export const deleteImgFromFirebase = async (imgUrl: string) => {
 
 export const loadGroupIns = async (
   forumGroup: string
-): Promise<ForumGroupTypes | null> => {
+): Promise<DB_ForumGroup | null> => {
   try {
-    // const query = dbService
-    //   .collection("forumGroup")
-    //   .where("enName", "==", forumGroup);
     const q = query(
       collection(dbService, "forumGroup"),
       where("enName", "==", forumGroup)
@@ -193,7 +188,7 @@ export const loadGroupIns = async (
 };
 
 export const handleDeleteForumPost = async (
-  post: ForumPostTypes
+  post: DB_ForumPost
 ): Promise<boolean> => {
   if (!isLoggedIn()) {
     return false;
@@ -205,8 +200,6 @@ export const handleDeleteForumPost = async (
   }
 
   try {
-    // delete from forumGroup
-    // const forumGroupQuery = dbService.doc(`forumGroup/${post.forumGroupId}`);
     const forumGroupDoc = doc(dbService, `forumGroup/${post.forumGroupId}`);
     const forumGroupQueryResult = await getDoc(forumGroupDoc);
     if (forumGroupQueryResult.exists()) {
@@ -218,17 +211,11 @@ export const handleDeleteForumPost = async (
         await updateDoc(forumGroupDoc, {
           posts: [...afterPosts],
         });
-        // await forumGroupQuery.update({
-        //   posts: [...afterPosts],
-        // });
       }
     }
 
     // delete comments
     for (const commentId of post.comments) {
-      // const commentQuery = dbService
-      //   .collection("forumComment")
-      //   .where("id", "==", commentId);
       const commentQuery = query(
         collection(dbService, "forumComment"),
         where("id", "==", commentId)
@@ -245,15 +232,10 @@ export const handleDeleteForumPost = async (
           }
 
           await deleteDoc(doc(dbService, `forumComment/${docRef.id}`));
-
-          // await dbService.doc(`forumComment/${doc.id}`).delete();
         }
       }
     }
     // delete post
-    // const postQuery = dbService
-    //   .collection("forumPost")
-    //   .where("id", "==", post.id);
     const postQuery = query(
       collection(dbService, "forumPost"),
       where("id", "==", post.id)
@@ -271,7 +253,6 @@ export const handleDeleteForumPost = async (
         }
 
         await deleteDoc(doc(dbService, `forumPost/${docRef.id}`));
-        // await dbService.doc(`forumPost/${doc.id}`).delete();
       }
     }
 

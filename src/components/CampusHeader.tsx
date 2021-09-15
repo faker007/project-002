@@ -6,7 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { CampusHeaderTypes, CampusTab } from "../types/CampusHeader.types";
+import { CampusHeaderTypes, CampusTab } from "../types/Campus.types";
 import { routes } from "../utils/constants";
 
 export const CampusHeader: React.FC<CampusHeaderTypes> = ({

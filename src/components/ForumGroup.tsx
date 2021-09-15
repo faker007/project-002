@@ -1,10 +1,10 @@
 import { faCommentAlt, faEye } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import { ForumGroupTypes } from "../types/Forum.types";
+import { DB_ForumGroup } from "../types/DBService.types";
 import { routes } from "../utils/constants";
 
-export const ForumGroup: React.FC<ForumGroupTypes> = ({
+export const ForumGroup: React.FC<DB_ForumGroup> = ({
   enName,
   korName,
   posts,

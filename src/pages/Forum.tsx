@@ -8,30 +8,26 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { domainToASCII } from "url";
 import { ForumGroup } from "../components/ForumGroup";
 import { ForumGroupPopUp } from "../components/ForumGroupPopUp";
-import { LoginCore } from "../components/LoginCore";
 import { PopUpLogin } from "../components/PopUpLogin";
-import { DB_Group } from "../types/DBService.types";
-import { ForumGroupTypes } from "../types/Forum.types";
-import { FORUM_GROUPS, FORUM_HERO_IMGS, routes } from "../utils/constants";
+import { DB_ForumGroup, DB_Group } from "../types/DBService.types";
+import { FORUM_GROUPS } from "../utils/constants";
 import { dbService } from "../utils/firebase";
 import { isLoggedIn } from "../utils/utils";
 
 export const Forum: React.FC = () => {
-  const [forumGroup, setForumGroup] = useState<ForumGroupTypes[]>([]);
+  const [forumGroup, setForumGroup] = useState<DB_ForumGroup[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loginMode, setLoginMode] = useState(false);
 
   const loadForumGroup = async (docs: any) => {
-    let arr: ForumGroupTypes[] = [];
+    let arr: DB_ForumGroup[] = [];
 
     for (const doc of docs) {
       if (doc.exists) {
-        const data: ForumGroupTypes = {
+        const data: DB_ForumGroup = {
           enName: doc.get("enName"),
           views: doc.get("views"),
           posts: doc.get("posts"),
