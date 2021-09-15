@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderTypes> = ({
             width={150}
             height={150}
           />
-          <span className="ml-5 text-2xl font-medium">서경 타임</span>
+          <span className="ml-5 text-2xl font-medium">서경 메이트</span>
         </Link>
         <div className="w-1/2">
           <ul className="w-full flex justify-end items-center">

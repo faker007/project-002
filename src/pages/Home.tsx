@@ -12,7 +12,7 @@ export const Home: React.FC = () => {
         <h1 className="text-7xl font-semibold text-green-500 ">
           대학교 친구가 필요해?!
           <br />
-          서경타임!{" "}
+          서경메이트!{" "}
         </h1>
       </div>
     </div>
