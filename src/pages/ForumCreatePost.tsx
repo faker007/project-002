@@ -141,20 +141,6 @@ export const ForumCreatePost: React.FC = () => {
               <FontAwesomeIcon icon={faChevronRight} className="mx-5" />
               <h1>게시물 작성</h1>
             </div>
-            <div className="w-1/4 flex items-center ">
-              <div className="border-b border-black w-5/6">
-                <FontAwesomeIcon
-                  className="text-xl text-gray-500 mb-1"
-                  icon={faSearch}
-                />
-              </div>
-              <div className="w-1/6 flex justify-center items-center">
-                <FontAwesomeIcon
-                  icon={faEllipsisV}
-                  className="text-xl text-gray-500"
-                />
-              </div>
-            </div>
           </header>
           <main
             className="border border-gray-300 px-10"

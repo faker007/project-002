@@ -63,9 +63,6 @@ export const Header: React.FC<HeaderTypes> = ({
               {openMenu && (
                 <div className="absolute top-6 right-0 bg-white text-gray-500 p-5 shadow-xl text-center">
                   <ul>
-                    <li className="mb-3 hover:text-black">Profile</li>
-                    <li className="mb-3 hover:text-black">내 계정</li>
-                    <li className="border-b border-black "></li>
                     <li
                       onClick={handleLogOut}
                       className="hover:text-red-500 font-medium"

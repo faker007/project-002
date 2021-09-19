@@ -101,25 +101,13 @@ export const Editor: React.FC<EditorTypes> = ({
   };
 
   const UploadToFirebase = async () => {
-    // const fireBaseFileRef = storageService
-    //   .ref()
-    //   .child(`${authService.currentUser?.uid || uuid()}/${uuid()}`);
     const fireBaseFileRef = ref(
       storageService,
       `${authService.currentUser?.uid || uuid()}/${uuid()}`
     );
 
     try {
-      // const uploadTask = await fireBaseFileRef.putString(
-      //   stringedFile,
-      //   "data_url"
-      // );
-      const uploadTask = await uploadString(
-        fireBaseFileRef,
-        stringedFile,
-        "data_url"
-      );
-      // const downloadURL = await uploadTask.ref.getDownloadURL();
+      await uploadString(fireBaseFileRef, stringedFile, "data_url");
       const downloadURL = await getDownloadURL(fireBaseFileRef);
       if (downloadURL !== "") {
         setImgUrlList((prev) => [...prev, downloadURL]);

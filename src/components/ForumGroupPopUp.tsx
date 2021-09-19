@@ -14,7 +14,10 @@ export const ForumGroupPopUp: React.FC<ForumGroupPopUpTypes> = ({
         onClick={() => setMenuOpen(false)}
         className="fixed top-0 left-0 w-full h-screen bg-black opacity-50 z-0"
       ></div>
-      <div className="max-w-screen-md bg-white w-full p-10  z-10">
+      <div
+        className="max-w-screen-md bg-white w-full p-10  z-10 overflow-auto"
+        style={{ maxHeight: "70vh" }}
+      >
         <div className="flex items-center justify-end">
           <FontAwesomeIcon
             onClick={() => setMenuOpen(false)}
@@ -28,7 +31,7 @@ export const ForumGroupPopUp: React.FC<ForumGroupPopUpTypes> = ({
         <div className="grid grid-cols-4 gap-5  ">
           {forumGroup.map((elem, index) => (
             <Link
-              className="border  border-gray-300 p-3 text-center hover:text-blue-800 transition-all ring-2 ring-gray-400 font-medium hover:opacity-60"
+              className="border  border-gray-300 p-3 text-center hover:text-blue-800 transition-all ring-2 ring-gray-400 font-medium hover:opacity-60 flex justify-center items-center"
               key={index}
               to={routes.forumCreatePost(elem.enName)}
             >

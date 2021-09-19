@@ -14,7 +14,7 @@ import { CampusDetailPost } from "../components/CampusDetailPost";
 import { CampusHeader } from "../components/CampusHeader";
 import { PopUpLogin } from "../components/PopUpLogin";
 import { DB_POST } from "../types/DBService.types";
-import { authService, dbService } from "../utils/firebase";
+import { authService } from "../utils/firebase";
 import { findGroupId, getFirestoreQuery, isLoggedIn } from "../utils/utils";
 import { getDocs } from "firebase/firestore";
 import { CampusDetailUseParamsTypes, CampusTab } from "../types/Campus.types";
@@ -39,29 +39,34 @@ export const CampusDetail: React.FC = () => {
   };
 
   const loadPosts = async () => {
-    const groupId = await findGroupId(campus);
-    const q = getFirestoreQuery("post", "groupId", groupId);
-    const queryResult = await getDocs(q);
-    const arr: DB_POST[] = [];
+    try {
+      const groupId = await findGroupId(campus);
+      const q = getFirestoreQuery("post", "groupId", groupId);
+      const queryResult = await getDocs(q);
+      const arr: DB_POST[] = [];
 
-    for (const doc of queryResult.docs) {
-      const data: DB_POST = {
-        body: doc.data().body,
-        createdAt: doc.data().createdAt,
-        creatorId: doc.data().creatorId,
-        comments: doc.data().comments,
-        groupId: doc.data().groupId,
-        id: doc.data().id,
-        imgUrlList: doc.data().imgUrlList,
-      };
+      for (const doc of queryResult.docs) {
+        const data: DB_POST = {
+          body: doc.data().body,
+          createdAt: doc.data().createdAt,
+          creatorId: doc.data().creatorId,
+          comments: doc.data().comments,
+          groupId: doc.data().groupId,
+          id: doc.data().id,
+          imgUrlList: doc.data().imgUrlList,
+        };
 
-      arr.push(data);
+        arr.push(data);
+      }
+
+      arr.sort((a, b) => b.createdAt - a.createdAt);
+      setPosts(arr);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setRefetchPost(false);
+      setLoading(false);
     }
-
-    arr.sort((a, b) => b.createdAt - a.createdAt);
-    setPosts(arr);
-    setRefetchPost(false);
-    setLoading(false);
   };
 
   const handleWriteModeOpen = () => {

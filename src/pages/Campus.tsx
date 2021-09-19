@@ -1,28 +1,20 @@
-import {
-  faChevronDown,
-  faCircleNotch,
-  faPlus,
-  faSearch,
-  faTruckLoading,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { PopUpLogin } from "../components/PopUpLogin";
 import { DB_Group } from "../types/DBService.types";
-import { CAMPUS_GROUPS, routes } from "../utils/constants";
+import { routes } from "../utils/constants";
 import { authService, dbService } from "../utils/firebase";
-import { getFirestoreQuery, initGroups, isLoggedIn } from "../utils/utils";
+import { getFirestoreQuery, isLoggedIn } from "../utils/utils";
 import {
   getDocs,
   doc,
   updateDoc,
-  getDoc,
   collection,
   onSnapshot,
-  addDoc,
 } from "firebase/firestore";
 
 export const Campus: React.FC = () => {
@@ -32,7 +24,6 @@ export const Campus: React.FC = () => {
 
   const checkGroupParticipants = async (group: string): Promise<boolean> => {
     let ok = false;
-    // const query = dbService.collection("group").where("enName", "==", group);
     const q = getFirestoreQuery("group", "enName", group);
     const queryResult = await getDocs(q);
 
@@ -100,7 +91,6 @@ export const Campus: React.FC = () => {
 
   const loadGroupList = async () => {
     setLoading(true);
-    // const groupList = await dbService.collection("group").get();
     const groupList = await getDocs(collection(dbService, "group"));
     const arr: DB_Group[] = [];
 
@@ -139,7 +129,7 @@ export const Campus: React.FC = () => {
   }, []);
 
   return (
-    <main className="max-w-screen-lg mx-auto">
+    <main className="max-w-screen-lg mx-auto pb-20">
       <section className="flex justify-between items-center mb-5 ">
         <h1 className="text-3xl">그룹</h1>
       </section>

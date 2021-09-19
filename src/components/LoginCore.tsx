@@ -11,10 +11,7 @@ import { LoginCoreSignInMode } from "./LoginCoreSignInMode";
 import { LoginCoreLoginMode } from "./LoginCoreLoginMode";
 import { LoginModeTypes } from "../types/LoginTypes";
 
-export const LoginCore: React.FC<LoginModeTypes> = ({
-  loginMode,
-  setLoginMode,
-}) => {
+export const LoginCore: React.FC<LoginModeTypes> = ({ setLoginMode }) => {
   const [signInMode, setSignInMode] = useState(true);
   const [commuDetail, setCommuDetail] = useState(false);
   const [emailMode, setEmailMode] = useState(false);

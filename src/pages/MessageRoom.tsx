@@ -157,11 +157,13 @@ export const MessageRoom: React.FC = () => {
 
     if (!isLoggedIn()) {
       toast.error("해당 기능은 로그인 후에 이용할 수 있습니다.");
+      setSendLoading(false);
       return;
     }
 
     if (input.length <= 0) {
       toast.error("메세지를 입력한 후에 전송해 주세요.");
+      setSendLoading(false);
       return;
     }
 

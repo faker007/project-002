@@ -38,7 +38,10 @@ export const ForumGroup: React.FC<DB_ForumGroup> = ({
           )}
         </div>
       </section>
-      <section className="flex items-center" style={{ width: "30%" }}>
+      <section
+        className="flex items-center justify-end"
+        style={{ width: "40%" }}
+      >
         <div className="mr-10">
           <FontAwesomeIcon icon={faEye} className="mr-2" />
           <span className="font-medium">{views}</span>
@@ -47,11 +50,6 @@ export const ForumGroup: React.FC<DB_ForumGroup> = ({
           <FontAwesomeIcon icon={faCommentAlt} className="mr-2" />
           <span className="font-medium">{posts.length}</span>
         </div>
-      </section>
-      <section style={{ width: "10%" }}>
-        <h1 className="cursor-pointer hover:opacity-60 transition-opacity">
-          팔로우
-        </h1>
       </section>
     </div>
   );

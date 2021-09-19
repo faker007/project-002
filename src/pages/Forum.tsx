@@ -1,18 +1,12 @@
-import { addDoc, collection, onSnapshot } from "@firebase/firestore";
-import { async } from "@firebase/util";
-import {
-  faCircleNotch,
-  faSearch,
-  faTimesCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { collection, onSnapshot } from "@firebase/firestore";
+import { faCircleNotch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect } from "react";
 import { useState } from "react";
 import { ForumGroup } from "../components/ForumGroup";
 import { ForumGroupPopUp } from "../components/ForumGroupPopUp";
 import { PopUpLogin } from "../components/PopUpLogin";
-import { DB_ForumGroup, DB_Group } from "../types/DBService.types";
-import { FORUM_GROUPS } from "../utils/constants";
+import { DB_ForumGroup } from "../types/DBService.types";
 import { dbService } from "../utils/firebase";
 import { isLoggedIn } from "../utils/utils";
 
@@ -89,9 +83,9 @@ export const Forum: React.FC = () => {
           <section className="w-full flex justify-end items-center mt-5">
             <button
               onClick={handleMenuOpen}
-              className="relative bg-blue-800 text-white px-5 py-2 hover:opacity-70 transition-all"
+              className="relative bg-blue-800 text-white px-5 py-3 hover:opacity-70 transition-all"
             >
-              <span>게시물 작성하기</span>
+              게시물 작성하기
             </button>
           </section>
           <section className="mt-5">

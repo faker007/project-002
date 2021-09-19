@@ -1,4 +1,3 @@
-import React from "react";
 import { faTimesCircle, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
@@ -41,9 +40,7 @@ export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
 
     try {
       await addDoc(collection(dbService, "post"), post);
-      // await dbService.collection("post").add(post);
 
-      // const groupRef = await dbService.doc(`group/${groupId}`).get();
       const groupRef = await getDoc(doc(dbService, `group/${groupId}`));
 
       if (groupRef.exists()) {
@@ -51,9 +48,6 @@ export const CampusDetailPopup: React.FC<CampusDetailPopupTypes> = ({
         await updateDoc(doc(dbService, `group/${groupId}`), {
           posts: [...postsRef, post.id],
         });
-        // await dbService.doc(`group/${groupId}`).update({
-        //   posts: [...postsRef, post.id],
-        // });
       }
 
       setRefetch(true);

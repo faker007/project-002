@@ -70,9 +70,6 @@ export const ForumDetail: React.FC = () => {
           }
         }
         arr.sort((a, b) => b.createdAt - a.createdAt);
-
-        console.log(`arr: `, arr);
-
         setPosts([...arr]);
       } catch (error) {
         console.log(error);
@@ -144,7 +141,7 @@ export const ForumDetail: React.FC = () => {
   }, [refetchPosts]);
 
   return (
-    <main className="max-w-screen-lg mx-auto">
+    <main className="max-w-screen-lg mx-auto min-h-screen">
       {loading ? (
         <div className="text-center">
           <FontAwesomeIcon

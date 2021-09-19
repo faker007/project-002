@@ -1,9 +1,4 @@
-import {
-  faChevronRight,
-  faEllipsisV,
-  faPlus,
-  faShare,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import { CampusHeaderTypes, CampusTab } from "../types/Campus.types";
