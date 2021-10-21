@@ -33,6 +33,8 @@ import {
 } from "firebase/firestore";
 import { CampusDetailPostTypes } from "../types/Campus.types";
 
+import Picker from "emoji-picker-react";
+
 export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
   post: { groupId, comments: commentIds, createdAt, body, creatorId, id },
   loginMode,
@@ -53,6 +55,7 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
   const [postMenuMode, setPostMenuMode] = useState(false);
   const [refetchComments, setRefetchComments] = useState(false);
   const [commentImgUrlList, setCommentImgUrlList] = useState<string[]>([]);
+  const [isOpenEmoji, setIsOpenEmoji] = useState<Boolean>(false);
 
   const handleCommentSubmit = async () => {
     if (editorValue.length <= 11 || !isLoggedIn()) {
@@ -248,6 +251,22 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
     setEditorValue("");
   };
 
+  const handleOpenEmoji = () => {
+    setIsOpenEmoji(!isOpenEmoji);
+  };
+
+  const onEmojiClick = (event: any, emojiObject: any) => {
+    setEditorValue((prev) => {
+      console.log(prev);
+      return prev + `<span>${emojiObject.emoji}</span>`;
+    });
+    // setChosenEmoji(emojiObject);
+  };
+
+  const handleToggleLike = (firebaseDocumentId: string) => {
+    alert(firebaseDocumentId);
+  };
+
   useEffect(() => {
     loadCreator();
     loadComments();
@@ -320,14 +339,22 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
           ></main>
           <aside className="w-full flex items-center justify-between pb-10 border-b border-gray-300">
             <section className="flex items-center">
-              <div className="p-1 px-3 border border-gray-500 rounded-sm hover:opacity-70 transition-opacity mr-3">
+              <div
+                className="p-1 px-3 border border-gray-500 rounded-sm hover:opacity-70 transition-opacity mr-3"
+                onClick={() => handleToggleLike(id)}
+              >
                 <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
                 <span>0</span>
               </div>
-              <div className="p-1 px-3 border border-gray-500 rounded-sm hover:opacity-70 transition-opacity">
+              <div
+                className="p-1 px-3 border border-gray-500 rounded-sm hover:opacity-70 transition-opacity"
+                onClick={() => handleOpenEmoji()}
+              >
                 <FontAwesomeIcon icon={faPlus} className="mr-2" />
                 <FontAwesomeIcon icon={faSmile} className="" />
               </div>
+
+              {isOpenEmoji ? <Picker onEmojiClick={onEmojiClick} /> : null}
             </section>
             <section>
               댓글 <span className="font-medium">{comments.length}</span>개

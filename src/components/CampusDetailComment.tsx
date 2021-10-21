@@ -190,16 +190,6 @@ export const CampusDetailComment: React.FC<CampusDetailCommentTypes> = ({
               dangerouslySetInnerHTML={{ __html: body }}
               className="py-5 font-medium"
             ></main>
-            <aside className="flex">
-              <div className="cursor-pointer hover:opacity-70 transition-all">
-                <FontAwesomeIcon icon={faHeart} className="mr-2 text-red-500" />
-                <span>좋아요</span>
-              </div>
-              <div className="ml-5 cursor-pointer hover:opacity-70 transition-all">
-                <FontAwesomeIcon icon={faShareSquare} className="mr-2" />
-                <span>답글</span>
-              </div>
-            </aside>
           </div>
         </>
       )}

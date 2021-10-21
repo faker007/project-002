@@ -17,6 +17,9 @@ export const Editor: React.FC<EditorTypes> = ({
   imgUrlList,
   setImgUrlList,
 }) => {
+  var Block = Quill.import("blots/block");
+  Block.tagName = "SPAN";
+  Quill.register(Block, true);
   Quill.register("modules/imageResize", ImageResize);
   const [stringedFile, setStringedFile] = useState("");
   const quillRef = useRef<ReactQuill>(null);
