@@ -54,6 +54,7 @@ export const CampusDetail: React.FC = () => {
           groupId: doc.data().groupId,
           id: doc.data().id,
           imgUrlList: doc.data().imgUrlList,
+          likes: doc.data().likes,
         };
 
         arr.push(data);

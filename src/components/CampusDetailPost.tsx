@@ -34,9 +34,18 @@ import {
 import { CampusDetailPostTypes } from "../types/Campus.types";
 
 import Picker from "emoji-picker-react";
+import { async } from "@firebase/util";
 
 export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
-  post: { groupId, comments: commentIds, createdAt, body, creatorId, id },
+  post: {
+    groupId,
+    comments: commentIds,
+    createdAt,
+    body,
+    creatorId,
+    id,
+    likes,
+  },
   loginMode,
   setLoginMode,
   refetch,
@@ -263,8 +272,47 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
     // setChosenEmoji(emojiObject);
   };
 
-  const handleToggleLike = (firebaseDocumentId: string) => {
-    alert(firebaseDocumentId);
+  const handleToggleLike = async (firebaseDocumentId: string) => {
+    if (!isLoggedIn()) {
+      toast.error("해당 기능은 로그인 후에 이용할 수 있습니다.");
+      return;
+    }
+    try {
+      const q = query(collection(dbService, "post"), where("id", "==", id));
+      const docRefs = await getDocs(q);
+
+      if (likes) {
+        const meLiked = likes.find(
+          (elem) => elem === authService.currentUser?.uid
+        );
+        for (const docRef of docRefs.docs) {
+          if (docRef.exists()) {
+            let updatedLikes = docRef.get("likes");
+            if (meLiked) {
+              updatedLikes = updatedLikes.filter(
+                (elem: any) => elem !== authService.currentUser?.uid
+              );
+            } else {
+              updatedLikes.push(authService.currentUser?.uid);
+            }
+            await updateDoc(doc(dbService, `post/${docRef.id}`), {
+              likes: updatedLikes,
+            });
+          }
+        }
+      } else {
+        for (const docRef of docRefs.docs) {
+          if (docRef.exists()) {
+            await updateDoc(doc(dbService, `post/${docRef.id}`), {
+              likes: [authService.currentUser?.uid],
+            });
+          }
+        }
+      }
+      setRefetch(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -286,6 +334,8 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
       loadComments();
     }
   }, [refetchComments]);
+
+  console.log(id, " : ", likes);
 
   return (
     <div className="w-full p-5 pb-0 my-5 border border-black">
@@ -344,7 +394,7 @@ export const CampusDetailPost: React.FC<CampusDetailPostTypes> = ({
                 onClick={() => handleToggleLike(id)}
               >
                 <FontAwesomeIcon icon={faThumbsUp} className="mr-2" />
-                <span>0</span>
+                <span>{likes?.length || 0}</span>
               </div>
               <div
                 className="p-1 px-3 border border-gray-500 rounded-sm hover:opacity-70 transition-opacity"

@@ -17,6 +17,7 @@ export const Editor: React.FC<EditorTypes> = ({
   imgUrlList,
   setImgUrlList,
 }) => {
+  // 이모지를 추가하기 위한 Quill 태그 변경
   var Block = Quill.import("blots/block");
   Block.tagName = "SPAN";
   Quill.register(Block, true);

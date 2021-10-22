@@ -20,6 +20,7 @@ export interface DB_POST {
   comments?: string[];
   groupId?: string;
   imgUrlList: string[];
+  likes?: string[];
 }
 
 export interface DB_COMMENT {
